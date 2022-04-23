@@ -1,0 +1,28 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+  "plugins": ["@typescript-eslint", "prettier"],
+  "extends": [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "settings": {
+    "react": {
+      "version": "latest"
+    }
+  },
+  "rules": {
+    "prettier/prettier": ["off"],
+    "indent": ["warn", 2, {"SwitchCase": 1}],
+    "semi": ["error", "always"],
+    "@typescript-eslint/interface-name-prefix": ["off"],
+    "@typescript-eslint/no-explicit-any": ["off"],
+    "@typescript-eslint/explicit-function-return-type": ["error"],
+    "react/static-property-placement": ["off"]
+  }
+}
