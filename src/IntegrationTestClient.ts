@@ -16,7 +16,7 @@ import {
   PutEventsRequestEntry,
   TestEventPatternRequest,
 } from 'aws-sdk/clients/eventbridge';
-import * as cdkEvents from '@aws-cdk/aws-events';
+import { aws_events as cdkEvents } from 'aws-cdk-lib';
 import IntegrationTestStack from './IntegrationTestStack';
 import { CurrentTestItem, TestItemKey, TestItemPrefix } from './TestItems';
 import StepFunctionsTestClient from './StepFunctionsTestClient';

@@ -2,25 +2,25 @@
 
 ## Overview
 
-The aim of this example is to demonstrate how the `sls-testing-toolkit` can be used to test the following construct.
+The aim of this example is to demonstrate how the `cdk-cloud-test-kit` can be used to test the following construct.
 
-![Diagram showing the Simple Event Router construct](https://raw.githubusercontent.com/andybalham/sls-testing-toolkit/main/examples/simple-event-router/images/SimpleEventRouter.jpg)
+![Diagram showing the Simple Event Router construct](https://raw.githubusercontent.com/andybalham/cdk-cloud-test-kit/main/examples/simple-event-router/images/SimpleEventRouter.jpg)
 
-The [`SimpleEventRouterConstruct`](https://github.com/andybalham/sls-testing-toolkit/blob/main/examples/simple-event-router/SimpleEventRouterConstruct.ts) consists of a single Lambda function that subscribes to an external SNS topic. The Lambda function then routes all received messages to one of two SNS topics depending on the content of the message. The internal algorithm of the Lambda function can be unit tested locally, but the challenge is how to test that the Lambda function works in conjunction with the topics. The only way to do this is to deploy to the cloud and test.
+The [`SimpleEventRouterConstruct`](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/simple-event-router/SimpleEventRouterConstruct.ts) consists of a single Lambda function that subscribes to an external SNS topic. The Lambda function then routes all received messages to one of two SNS topics depending on the content of the message. The internal algorithm of the Lambda function can be unit tested locally, but the challenge is how to test that the Lambda function works in conjunction with the topics. The only way to do this is to deploy to the cloud and test.
 
-The Serverless Testing Toolkit helps here, as it allows you to deploy the construct under test as part of a test stack and test the construct in isolation. The result is the [`SimpleEventRouterTestStack`](https://github.com/andybalham/sls-testing-toolkit/blob/main/examples/simple-event-router/SimpleEventRouterTestStack.ts), which is shown below.
+The Serverless Testing Toolkit helps here, as it allows you to deploy the construct under test as part of a test stack and test the construct in isolation. The result is the [`SimpleEventRouterTestStack`](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/simple-event-router/SimpleEventRouterTestStack.ts), which is shown below.
 
-![Diagram showing the Simple Event Router test stack](https://raw.githubusercontent.com/andybalham/sls-testing-toolkit/main/examples/simple-event-router/images/SimpleEventRouterTestStack.jpg)
+![Diagram showing the Simple Event Router test stack](https://raw.githubusercontent.com/andybalham/cdk-cloud-test-kit/main/examples/simple-event-router/images/SimpleEventRouterTestStack.jpg)
 
 With the stack deployed, unit tests can be created that publish messages and observe the results and the functionality verified.
 
 ## `SimpleEventRouterConstruct`
 
-This is a plain CDK construct. It doesn't have any dependency on `sls-testing-toolkit`.
+This is a plain CDK construct. It doesn't have any dependency on `cdk-cloud-test-kit`.
 
 ## `SimpleEventRouterTestStack`
 
-The test stack sub-classes the `IntegrationTestStack` from the `sls-testing-toolkit` and declares the following constants. These are used to tag the test resources that the unit tests will need to interact with.
+The test stack sub-classes the `IntegrationTestStack` from the `cdk-cloud-test-kit` and declares the following constants. These are used to tag the test resources that the unit tests will need to interact with.
 
 ```TypeScript
 static readonly ResourceTagKey = 'SimpleEventRouterTestStack';
@@ -86,7 +86,7 @@ The stack can be deployed using the script `npm run simple-event-router-deploy`.
 
 For the unit tests we will be using the [Mocha](https://mochajs.org/) testing framework and the [Chai](https://www.chaijs.com/guide) assertion library. The approach doesn't use anything specific to these, so it should be still viable if other frameworks and libraries are used.
 
-Note, the `sls-testing-toolkit` requires that there is a `.env` file with an entry for `AWS_REGION`, e.g.:
+Note, the `cdk-cloud-test-kit` requires that there is a `.env` file with an entry for `AWS_REGION`, e.g.:
 
 ```
 AWS_REGION=eu-west-2

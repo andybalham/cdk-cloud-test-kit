@@ -1,8 +1,7 @@
 /* eslint-disable no-new */
-import * as cdk from '@aws-cdk/core';
-import * as sqs from '@aws-cdk/aws-sqs';
-import * as sns from '@aws-cdk/aws-sns';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
+import { aws_sqs as sqs, aws_sns as sns, aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { IntegrationTestStack } from '../../src';
 import LoanProcessorStateMachine from './LoanProcessorStateMachine';
 import writeGraphJson from './writeGraphJson';
@@ -26,7 +25,7 @@ export default class LoanProcessorTestStack extends IntegrationTestStack {
 
   static readonly LoanProcessorStateMachineId = 'LoanProcessorStateMachine';
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     //
     super(scope, id, {
       testStackId: LoanProcessorTestStack.Id,

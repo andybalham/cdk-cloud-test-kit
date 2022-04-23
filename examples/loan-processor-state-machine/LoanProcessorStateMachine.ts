@@ -1,16 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import * as lambdaNodejs from '@aws-cdk/aws-lambda-nodejs';
-import StateMachineBuilder from '@andybalham/state-machine-builder';
-import StateMachineWithGraph from '@andybalham/state-machine-with-graph';
-import * as cdk from '@aws-cdk/core';
-import * as sfn from '@aws-cdk/aws-stepfunctions';
-import * as sfnTasks from '@aws-cdk/aws-stepfunctions-tasks';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
-import * as sns from '@aws-cdk/aws-sns';
-import * as sqs from '@aws-cdk/aws-sqs';
-import { DynamoAttributeValue } from '@aws-cdk/aws-stepfunctions-tasks';
-import { JsonPath } from '@aws-cdk/aws-stepfunctions';
+import StateMachineBuilder from '@andybalham/state-machine-builder-v2';
+import StateMachineWithGraph from '@andybalham/state-machine-with-graph-v2';
+import { Construct } from 'constructs';
+import {
+  aws_stepfunctions as sfn,
+  aws_stepfunctions_tasks as sfnTasks,
+  aws_sqs as sqs,
+  aws_sns as sns,
+  aws_dynamodb as dynamodb,
+  aws_lambda as lambda,
+  aws_lambda_nodejs as lambdaNodejs,
+} from 'aws-cdk-lib';
+import { DynamoAttributeValue } from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { JsonPath } from 'aws-cdk-lib/aws-stepfunctions';
 import { CreditRating } from './ExternalContracts';
 
 export interface LoanProcessorStateMachineProps extends Omit<sfn.StateMachineProps, 'definition'> {
@@ -26,10 +28,10 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
 
   static readonly CreditRatingErrorSource = 'CreditRating';
 
-  constructor(scope: cdk.Construct, id: string, props: LoanProcessorStateMachineProps) {
+  constructor(scope: Construct, id: string, props: LoanProcessorStateMachineProps) {
     super(scope, id, {
       ...props,
-      getDefinition: (definitionScope: cdk.Construct): sfn.IChainable =>
+      getDefinition: (definitionScope: Construct): sfn.IChainable =>
         StateMachineBuilder.new()
 
           .lambdaInvoke('GetCreditRating', {

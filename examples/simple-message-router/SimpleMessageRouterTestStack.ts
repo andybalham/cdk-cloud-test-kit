@@ -1,5 +1,6 @@
-import * as cdk from '@aws-cdk/core';
-import * as sqs from '@aws-cdk/aws-sqs';
+import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
+import { aws_sqs as sqs } from 'aws-cdk-lib';
 import { IntegrationTestStack } from '../../src';
 import SimpleMessageRouterConstruct from './SimpleMessageRouterConstruct';
 
@@ -17,7 +18,7 @@ export default class SimpleMessageRouterTestStack extends IntegrationTestStack {
 
   static readonly NegativeOutputDLQConsumerId = 'NegativeOutputDLQConsumerFunction';
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     //
     super(scope, id, {
       testStackId: SimpleMessageRouterTestStack.Id,

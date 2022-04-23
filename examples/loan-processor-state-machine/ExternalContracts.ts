@@ -1,4 +1,4 @@
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 
 export interface LoanDetails {
   firstName: string;

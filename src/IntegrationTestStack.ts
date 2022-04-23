@@ -1,15 +1,18 @@
-import * as cdk from '@aws-cdk/core';
-import * as sqs from '@aws-cdk/aws-sqs';
-import * as sns from '@aws-cdk/aws-sns';
-import * as snsSubs from '@aws-cdk/aws-sns-subscriptions';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as lambdaEventSources from '@aws-cdk/aws-lambda-event-sources';
-import * as lambdaNodejs from '@aws-cdk/aws-lambda-nodejs';
+import { Construct, IConstruct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
+import {
+  aws_sqs as sqs,
+  aws_sns as sns,
+  aws_sns_subscriptions as snsSubs,
+  aws_dynamodb as dynamodb,
+  aws_lambda as lambda,
+  aws_lambda_event_sources as lambdaEventSources,
+  aws_lambda_nodejs as lambdaNodejs,
+  aws_events as events,
+  aws_events_targets as eventsTargets,
+} from 'aws-cdk-lib';
 import path from 'path';
 import fs from 'fs';
-import * as events from '@aws-cdk/aws-events';
-import * as eventsTargets from '@aws-cdk/aws-events-targets';
 
 export interface IntegrationTestStackProps {
   testStackId: string;
@@ -27,7 +30,7 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
 
   readonly testFunctions: Record<string, lambda.IFunction>;
 
-  constructor(scope: cdk.Construct, id: string, props: IntegrationTestStackProps) {
+  constructor(scope: Construct, id: string, props: IntegrationTestStackProps) {
     super(scope, id);
 
     this.testStackId = props.testStackId;
@@ -64,7 +67,7 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
     }
   }
 
-  addTestResourceTag(resource: cdk.IConstruct, resourceId: string): void {
+  addTestResourceTag(resource: IConstruct, resourceId: string): void {
     cdk.Tags.of(resource).add(this.testStackId, resourceId);
   }
 

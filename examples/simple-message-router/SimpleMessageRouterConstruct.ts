@@ -1,16 +1,18 @@
-import * as cdk from '@aws-cdk/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import * as sqs from '@aws-cdk/aws-sqs';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as lambdaEventSources from '@aws-cdk/aws-lambda-event-sources';
-import * as lambdaNodejs from '@aws-cdk/aws-lambda-nodejs';
+import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
+import {
+  aws_sqs as sqs,
+  aws_lambda as lambda,
+  aws_lambda_event_sources as lambdaEventSources,
+  aws_lambda_nodejs as lambdaNodejs,
+} from 'aws-cdk-lib';
 import path from 'path';
 
 export interface SimpleMessageRouterProps {
   inputQueue: sqs.IQueue;
 }
 
-export default class SimpleMessageRouterConstruct extends cdk.Construct {
+export default class SimpleMessageRouterConstruct extends Construct {
   //
   readonly positiveOutputQueue: sqs.IQueue;
 
@@ -20,7 +22,7 @@ export default class SimpleMessageRouterConstruct extends cdk.Construct {
 
   readonly negativeOutputDLQ: sqs.IQueue;
 
-  constructor(scope: cdk.Construct, id: string, props: SimpleMessageRouterProps) {
+  constructor(scope: Construct, id: string, props: SimpleMessageRouterProps) {
     super(scope, id);
 
     const outputQueueProps: sqs.QueueProps = {

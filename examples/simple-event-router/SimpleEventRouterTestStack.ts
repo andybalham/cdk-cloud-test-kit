@@ -1,5 +1,5 @@
-import * as cdk from '@aws-cdk/core';
-import * as sns from '@aws-cdk/aws-sns';
+import { Construct } from 'constructs';
+import { aws_sns as sns } from 'aws-cdk-lib';
 import { IntegrationTestStack } from '../../src';
 import SimpleEventRouterConstruct from './SimpleEventRouterConstruct';
 
@@ -13,7 +13,7 @@ export default class SimpleEventRouterTestStack extends IntegrationTestStack {
 
   static readonly NegativeOutputTopicSubscriberId = 'NegativeOutputTopicSubscriberFunction';
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     //
     super(scope, id, {
       testStackId: SimpleEventRouterTestStack.Id,

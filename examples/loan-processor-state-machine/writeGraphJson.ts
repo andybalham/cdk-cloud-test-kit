@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import StateMachineWithGraph from '@andybalham/state-machine-with-graph';
+import StateMachineWithGraph from '@andybalham/state-machine-with-graph-v2';
 import * as fs from 'fs';
 import path from 'path';
 
