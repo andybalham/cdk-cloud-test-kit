@@ -1,9 +1,11 @@
-import * as cdk from '@aws-cdk/core';
-import * as events from '@aws-cdk/aws-events';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as lambdaNodejs from '@aws-cdk/aws-lambda-nodejs';
+import { Construct } from 'constructs';
+import {
+  aws_lambda as lambda,
+  aws_lambda_nodejs as lambdaNodejs,
+  aws_events as events,
+} from 'aws-cdk-lib';
 
-export default class NotificationHub extends cdk.Construct {
+export default class NotificationHub extends Construct {
   //
   readonly eventBus: events.EventBus;
 
@@ -11,7 +13,7 @@ export default class NotificationHub extends cdk.Construct {
 
   static readonly NotificationHubEventBusId = 'NotificationHubEventBus';
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
 
     this.eventBus = new events.EventBus(this, NotificationHub.NotificationHubEventBusId);

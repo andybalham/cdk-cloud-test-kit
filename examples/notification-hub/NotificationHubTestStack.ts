@@ -1,6 +1,5 @@
-import * as cdk from '@aws-cdk/core';
-import * as events from '@aws-cdk/aws-events';
-import * as eventsTargets from '@aws-cdk/aws-events-targets';
+import { Construct } from 'constructs';
+import { aws_events as events, aws_events_targets as eventsTargets } from 'aws-cdk-lib';
 import { IntegrationTestStack } from '../../src';
 import NotificationHub from './NotificationHub';
 import { CaseEventType } from './ExternalContracts';
@@ -82,7 +81,7 @@ export default class NotificationHubTestStack extends IntegrationTestStack {
     },
   };
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     super(scope, id, {
       testStackId: NotificationHubTestStack.Id,
       testFunctionIds: [NotificationHubTestStack.BusObserverFunctionId],

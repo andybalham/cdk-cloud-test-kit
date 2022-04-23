@@ -1,21 +1,23 @@
-import * as cdk from '@aws-cdk/core';
-import * as sns from '@aws-cdk/aws-sns';
-import * as snsSubs from '@aws-cdk/aws-sns-subscriptions';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as lambdaNodejs from '@aws-cdk/aws-lambda-nodejs';
+import { Construct } from 'constructs';
+import {
+  aws_sns as sns,
+  aws_sns_subscriptions as snsSubs,
+  aws_lambda as lambda,
+  aws_lambda_nodejs as lambdaNodejs,
+} from 'aws-cdk-lib';
 import path from 'path';
 
 export interface SimpleEventRouterProps {
   inputTopic: sns.ITopic;
 }
 
-export default class SimpleEventRouterConstruct extends cdk.Construct {
+export default class SimpleEventRouterConstruct extends Construct {
   //
   readonly positiveOutputTopic: sns.ITopic;
 
   readonly negativeOutputTopic: sns.ITopic;
 
-  constructor(scope: cdk.Construct, id: string, props: SimpleEventRouterProps) {
+  constructor(scope: Construct, id: string, props: SimpleEventRouterProps) {
     super(scope, id);
 
     const outputTopicProps = {};

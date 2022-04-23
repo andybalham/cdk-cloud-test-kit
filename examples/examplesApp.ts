@@ -1,5 +1,5 @@
 /* eslint-disable no-new */
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib';
 import LoanProcessorTestStack from './loan-processor-state-machine/LoanProcessorTestStack';
 import NotificationHubTestStack from './notification-hub/NotificationHubTestStack';
 import SimpleEventRouterTestStack from './simple-event-router/SimpleEventRouterTestStack';

@@ -1,7 +1,7 @@
 {
-  "name": "@andybalham/sls-testing-toolkit",
-  "version": "1.0.13",
-  "description": "A toolkit for testing AWS serverless applications",
+  "name": "@andybalham/cdk-cloud-test-kit",
+  "version": "1.0.0",
+  "description": "A toolkit for cloud-based testing of CDK applications",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -9,7 +9,6 @@
     "lint-and-fix": "eslint ./src --ext .ts --fix",
     "build": "npm run lint && tsc",
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "test-coverage": "nyc npm run test",
     "all-synth": "tsc && cdk synth",
     "all-deploy": "tsc && cdk deploy",
     "all-destroy": "tsc && cdk destroy --all",
@@ -28,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andybalham/sls-testing-toolkit.git"
+    "url": "git+https://github.com/andybalham/cdk-cloud-test-kit.git"
   },
   "author": "Andy Blackledge",
   "keywords": [
@@ -39,33 +38,22 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/andybalham/sls-testing-toolkit/issues"
+    "url": "https://github.com/andybalham/cdk-cloud-test-kit/issues"
   },
-  "homepage": "https://github.com/andybalham/sls-testing-toolkit#README",
+  "homepage": "https://github.com/andybalham/cdk-cloud-test-kit#README",
   "devDependencies": {
-    "@andybalham/state-machine-builder": "^1.0.11",
-    "@andybalham/state-machine-with-graph": "^1.0.4",
-    "@aws-cdk/aws-dynamodb": "^1.0.0",
-    "@aws-cdk/aws-events": "^1.0.0",
-    "@aws-cdk/aws-events-targets": "^1.0.0",
-    "@aws-cdk/aws-lambda": "^1.0.0",
-    "@aws-cdk/aws-lambda-event-sources": "^1.0.0",
-    "@aws-cdk/aws-lambda-nodejs": "^1.0.0",
-    "@aws-cdk/aws-sns": "^1.0.0",
-    "@aws-cdk/aws-sns-subscriptions": "^1.0.0",
-    "@aws-cdk/aws-sqs": "^1.0.0",
-    "@aws-cdk/aws-stepfunctions": "^1.0.0",
-    "@aws-cdk/aws-stepfunctions-tasks": "^1.0.0",
-    "@aws-cdk/core": "^1.0.0",
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@types/aws-lambda": "^8.10.81",
+    "@andybalham/state-machine-builder-v2": "^2.0.1",
+    "@andybalham/state-machine-with-graph-v2": "^2.0.0",
+    "@types/aws-lambda": "^8.10.95",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
     "@types/node": "^14.14.31",
     "@typescript-eslint/eslint-plugin": "^4.28.5",
     "@typescript-eslint/parser": "^4.28.5",
+    "aws-cdk-lib": "^2.0.0",
     "aws-sdk": "^2.958.0",
     "chai": "^4.3.4",
+    "constructs": "^10.0.0",
     "esbuild": "^0.12.17",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
@@ -86,19 +74,9 @@
     "typescript": "^4.3.5"
   },
   "peerDependencies": {
-    "esbuild": "0.x",
-    "@aws-cdk/aws-dynamodb": "1.x",
-    "@aws-cdk/aws-events": "1.x",
-    "@aws-cdk/aws-events-targets": "1.x",
-    "@aws-cdk/aws-lambda": "1.x",
-    "@aws-cdk/aws-lambda-event-sources": "1.x",
-    "@aws-cdk/aws-lambda-nodejs": "1.x",
-    "@aws-cdk/aws-sns": "1.x",
-    "@aws-cdk/aws-sns-subscriptions": "1.x",
-    "@aws-cdk/aws-sqs": "1.x",
-    "@aws-cdk/aws-stepfunctions": "1.x",
-    "@aws-cdk/aws-stepfunctions-tasks": "1.x",
-    "@aws-cdk/core": "1.x"
+    "aws-cdk-lib": "^2.x",
+    "constructs": "^10.x",
+    "esbuild": "0.x"
   },
   "dependencies": {
     "dotenv": "^10.0.0",

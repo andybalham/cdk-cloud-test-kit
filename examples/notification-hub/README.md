@@ -2,11 +2,11 @@
 
 ## Overview
 
-The aim of this example is to demonstrate how the `sls-testing-toolkit` can be used to test the `NotificationHubConstruct`, as shown below.
+The aim of this example is to demonstrate how the `cdk-cloud-test-kit` can be used to test the `NotificationHubConstruct`, as shown below.
 
-![Diagram showing the Notification Hub construct](https://raw.githubusercontent.com/andybalham/sls-testing-toolkit/main/examples/notification-hub/images/notification-hub-test-stack.jpg)
+![Diagram showing the Notification Hub construct](https://raw.githubusercontent.com/andybalham/cdk-cloud-test-kit/main/examples/notification-hub/images/notification-hub-test-stack.jpg)
 
-The `sls-testing-toolkit` helps here, as it allows you to deploy the construct under test as part of a test stack and test the construct in isolation. As shown above, the result is the [`NotificationHubTestStack`](https://github.com/andybalham/sls-testing-toolkit/blob/main/examples/notification-hub/NotificationHubTestStack.ts). With the construct deployed in this manner, the `sls-testing-toolkit` makes it easy to put events on the event bus from a unit test.
+The `cdk-cloud-test-kit` helps here, as it allows you to deploy the construct under test as part of a test stack and test the construct in isolation. As shown above, the result is the [`NotificationHubTestStack`](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/notification-hub/NotificationHubTestStack.ts). With the construct deployed in this manner, the `cdk-cloud-test-kit` makes it easy to put events on the event bus from a unit test.
 
 ```TypeScript
 let notificationHubEventBus: EventBridgeTestClient;
@@ -34,7 +34,7 @@ const eventRequest: PutEventsRequestEntry = {
 await notificationHubEventBus.putEventAsync(eventRequest);
 ```
 
-See [`NotificationHub.test.ts`](https://github.com/andybalham/sls-testing-toolkit/blob/main/examples/notification-hub/NotificationHub.test.ts) for the full code.
+See [`NotificationHub.test.ts`](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/notification-hub/NotificationHub.test.ts) for the full code.
 
 `IntegrationTestStack` also provides a number of convenience methods for attaching test functions as targets for pattern-based rules, e.g.:
 
@@ -50,4 +50,4 @@ this.addEventBridgeRuleTargetFunction(
 );
 ```
 
-The `IntegrationTestClient` has an `isEventPatternMatchAsync` method for testing CDK-based event patterns. It encapsulates the differences between the format expected by CDK and that expected by the SDK. See [`NotificationHubPattern.test.ts`](https://github.com/andybalham/sls-testing-toolkit/blob/main/examples/notification-hub/NotificationHubPattern.test.ts) for examples of this.
+The `IntegrationTestClient` has an `isEventPatternMatchAsync` method for testing CDK-based event patterns. It encapsulates the differences between the format expected by CDK and that expected by the SDK. See [`NotificationHubPattern.test.ts`](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/notification-hub/NotificationHubPattern.test.ts) for examples of this.
