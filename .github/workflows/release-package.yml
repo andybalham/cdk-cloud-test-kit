@@ -32,6 +32,6 @@ jobs:
           cp ./package.json ./dist/src/package.json 
           cp ./README.md ./dist/src/README.md
           cd ./dist/src
-          yarn publish --access=public
+          npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
