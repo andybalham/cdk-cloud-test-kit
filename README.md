@@ -1,14 +1,21 @@
+![CDK Cloud Test Kit logo](logo.png)
+
 # CDK Cloud Test Kit
 
-A set of components that leverage the [AWS CDK](https://aws.amazon.com/cdk/) to make it straightforward to test serverless constructs in the cloud.
+The CDK Cloud Test Kit is a set of components that use the [AWS CDK](https://aws.amazon.com/cdk/) to make it straightforward to test serverless applications in the cloud.
 
-The best way to see what cdk-cloud-test-kit can do for you is to look at the examples or, better still, run them.
+TODO: Talk about how it is built around
+
+- `IntegrationTestStack`
+- `IntegrationTestClient`
+
+The best way to see what the `cdk-cloud-test-kit` can do for you is to look at the examples or, better still, run them.
 
 ## Examples
 
 ### [Simple Event Router](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/simple-event-router)
 
-This example tests a construct that encapsulates a simple SNS event router. It demonstrates how the toolkit can publish test events and observe the effects to validate the behaviour. 
+This example tests a construct that encapsulates a simple SNS event router. It demonstrates how the toolkit can publish test events and observe the effects to validate the behaviour.
 
 ### [Simple Message Router](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/simple-message-router)
 
