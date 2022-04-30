@@ -2,12 +2,14 @@
 
 # CDK Cloud Test Kit
 
-The CDK Cloud Test Kit is a set of components that use the [AWS CDK](https://aws.amazon.com/cdk/) to make it straightforward to test serverless applications in the cloud.
+The CDK Cloud Test Kit is a set of TypeScript classes, with the aim of making it straightforward to test [CDK constructs](https://TODO) in the cloud.
 
-TODO: Talk about how it is built around
+The approach is based on two key classes:
 
-- `IntegrationTestStack`
-- `IntegrationTestClient`
+- `IntegrationTestStack` - A base [`Stack`](https://TODO), used to deploy the construct under test along with any test drivers and test observers.
+- `IntegrationTestClient` - A class that is used to drive the construct under test and to poll for the resulting test observations.
+
+TODO: Diagram
 
 The best way to see what the `cdk-cloud-test-kit` can do for you is to look at the examples or, better still, run them.
 
