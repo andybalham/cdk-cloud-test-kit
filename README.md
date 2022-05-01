@@ -1,4 +1,4 @@
-![CDK Cloud Test Kit logo](https://github.com/andybalham/cdk-cloud-test-kit/tree/main/images/cdk-cloud-test-kit-logo.png?raw=true)
+![CDK Cloud Test Kit logo](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/images/cdk-cloud-test-kit-logo.png?raw=true)
 
 # CDK Cloud Test Kit
 
@@ -9,7 +9,7 @@ The approach is based on two key classes:
 - `IntegrationTestStack` - A base [`Stack`](https://docs.aws.amazon.com/cdk/latest/guide/stacks.html), used to deploy the construct under test along with any test drivers and test observers.
 - `IntegrationTestClient` - A class that is used to drive the construct under test and to poll for the resulting test observations.
 
-![Overview of package classes](https://github.com/andybalham/cdk-cloud-test-kit/tree/main/images/cdk-cloud-test-kit-overview.png?raw=true)
+![Overview of package classes](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/images/cdk-cloud-test-kit-overview.png?raw=true)
 
 `IntegrationTestStack` is an abstract class, derived from the CDK [Stack](https://docs.aws.amazon.com/cdk/latest/guide/stacks.html) class, that provides the following functionality:
 
