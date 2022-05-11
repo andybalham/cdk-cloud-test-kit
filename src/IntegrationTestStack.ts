@@ -14,7 +14,7 @@ import {
 import path from 'path';
 import fs from 'fs';
 
-export interface IntegrationTestStackProps {
+export interface IntegrationTestStackProps extends cdk.StackProps {
   testStackId: string;
   integrationTestTable?: boolean;
   testFunctionIds?: string[];
@@ -31,7 +31,7 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
   readonly testFunctions: Record<string, lambda.IFunction>;
 
   constructor(scope: Construct, id: string, props: IntegrationTestStackProps) {
-    super(scope, id);
+    super(scope, id, props);
 
     this.testStackId = props.testStackId;
 
