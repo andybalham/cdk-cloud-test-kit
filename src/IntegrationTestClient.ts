@@ -251,6 +251,9 @@ export default class IntegrationTestClient {
     timedOut: boolean;
   }> {
     //
+    if (!this.testId) {
+      throw new Error(`No testId specified, are you missing a call to initialiseTestAsync?`);
+    }
     const timeOutThreshold = Date.now() + 1000 * timeoutSeconds;
 
     const timedOut = (): boolean => Date.now() > timeOutThreshold;
