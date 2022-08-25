@@ -6,6 +6,7 @@ import {
   aws_lambda_nodejs as lambdaNodejs,
 } from 'aws-cdk-lib';
 import path from 'path';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 export interface SimpleEventRouterProps {
   inputTopic: sns.ITopic;
@@ -38,6 +39,7 @@ export default class SimpleEventRouterConstruct extends Construct {
           POSITIVE_OUTPUT_TOPIC_ARN: this.positiveOutputTopic.topicArn,
           NEGATIVE_OUTPUT_TOPIC_ARN: this.negativeOutputTopic.topicArn,
         },
+        logRetention: RetentionDays.ONE_DAY,
       }
     );
 

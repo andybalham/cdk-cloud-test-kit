@@ -4,6 +4,7 @@ import {
   aws_lambda_nodejs as lambdaNodejs,
   aws_events as events,
 } from 'aws-cdk-lib';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 export default class NotificationHub extends Construct {
   //
@@ -25,6 +26,7 @@ export default class NotificationHub extends Construct {
         environment: {
           EVENT_BUS_NAME: this.eventBus.eventBusName,
         },
+        logRetention: RetentionDays.ONE_DAY,
       }
     );
 

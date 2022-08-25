@@ -13,6 +13,7 @@ import {
 } from 'aws-cdk-lib';
 import path from 'path';
 import fs from 'fs';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 export interface IntegrationTestStackProps extends cdk.StackProps {
   testStackId: string;
@@ -155,6 +156,7 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
         FUNCTION_ID: functionId,
         INTEGRATION_TEST_TABLE_NAME: this.integrationTestTable.tableName,
       },
+      logRetention: RetentionDays.ONE_DAY,
     });
 
     this.addTestResourceTag(testFunction, functionId);

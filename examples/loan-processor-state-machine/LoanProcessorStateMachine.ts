@@ -13,6 +13,7 @@ import {
 } from 'aws-cdk-lib';
 import { DynamoAttributeValue } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { JsonPath } from 'aws-cdk-lib/aws-stepfunctions';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { CreditRating } from './ExternalContracts';
 
 export interface LoanProcessorStateMachineProps extends Omit<sfn.StateMachineProps, 'definition'> {
@@ -62,7 +63,10 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
           .lambdaInvoke('BuildLoanItem', {
             lambdaFunction: new lambdaNodejs.NodejsFunction(
               definitionScope,
-              'BuildLoanItemFunction'
+              'BuildLoanItemFunction',
+              {
+                logRetention: RetentionDays.ONE_DAY,
+              }
             ),
             inputPath: '$.loanDetails',
             resultPath: '$.loanItem',
@@ -83,7 +87,10 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
           .lambdaInvoke('BuildDeclinedEvent', {
             lambdaFunction: new lambdaNodejs.NodejsFunction(
               definitionScope,
-              'BuildDeclinedEventFunction'
+              'BuildDeclinedEventFunction',
+              {
+                logRetention: RetentionDays.ONE_DAY,
+              }
             ),
             inputPath: '$.loanDetails',
             resultPath: '$.declinedEvent',
@@ -104,7 +111,10 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
           .lambdaInvoke('ExtractErrorCause', {
             lambdaFunction: new lambdaNodejs.NodejsFunction(
               definitionScope,
-              'ExtractErrorCauseFunction'
+              'ExtractErrorCauseFunction',
+              {
+                logRetention: RetentionDays.ONE_DAY,
+              }
             ),
             resultPath: '$.Cause',
           })
