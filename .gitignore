@@ -106,3 +106,5 @@ dist
 cdk.out/
 
 .stateMachineASL
+
+.cdk-synth.yml

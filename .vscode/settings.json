@@ -7,15 +7,16 @@
   "cSpell.language": "en-GB",
   "cSpell.words": [
     "Chainable",
-    "TRes",
     "dlqs",
     "esbuild",
     "eventbridge",
     "exts",
+    "hotswap",
     "istanbuljs",
     "nanoid",
     "resourcegroupstaggingapi",
     "stepfunctions",
+    "TRes",
     "vars"
   ]
 }

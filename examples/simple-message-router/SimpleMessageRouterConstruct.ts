@@ -7,6 +7,7 @@ import {
   aws_lambda_nodejs as lambdaNodejs,
 } from 'aws-cdk-lib';
 import path from 'path';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 export interface SimpleMessageRouterProps {
   inputQueue: sqs.IQueue;
@@ -62,6 +63,7 @@ export default class SimpleMessageRouterConstruct extends Construct {
           POSITIVE_OUTPUT_QUEUE_URL: this.positiveOutputQueue.queueUrl,
           NEGATIVE_OUTPUT_QUEUE_URL: this.negativeOutputQueue.queueUrl,
         },
+        logRetention: RetentionDays.ONE_DAY,
       }
     );
 
