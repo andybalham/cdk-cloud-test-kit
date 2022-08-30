@@ -2,6 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import LoanProcessorTestStack from './loan-processor-state-machine/LoanProcessorTestStack';
 import NotificationHubTestStack from './notification-hub/NotificationHubTestStack';
+import RequestApiTestStack from './request-api/RequestApiTestStack';
 import SimpleEventRouterTestStack from './simple-event-router/SimpleEventRouterTestStack';
 import SimpleMessageRouterTestStack from './simple-message-router/SimpleMessageRouterTestStack';
 
@@ -11,4 +12,5 @@ cdk.Tags.of(app).add('app', 'ExamplesApp');
 new SimpleEventRouterTestStack(app, SimpleEventRouterTestStack.Id);
 new SimpleMessageRouterTestStack(app, SimpleMessageRouterTestStack.Id);
 new LoanProcessorTestStack(app, LoanProcessorTestStack.Id);
+new RequestApiTestStack(app, RequestApiTestStack.Id);
 new NotificationHubTestStack(app, NotificationHubTestStack.Id);

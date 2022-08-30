@@ -493,6 +493,40 @@ export default class IntegrationTestClient {
     ),
   };
 
+  getApiGatewayBaseUrlByStackId(targetStackId: string): string | undefined {
+    //
+    if (this.testResourceTagMappingList === undefined)
+      throw new Error('this.testResourceTagMappingList === undefined');
+
+    const resourceARNs = this.testResourceTagMappingList
+      .filter(
+        (r) =>
+          r.Tags &&
+          r.Tags.some((t) => t.Key === this.props.testStackId && t.Value === targetStackId)
+      )
+      .map((t) => t.ResourceARN);
+
+    if (resourceARNs.length === 0) {
+      return undefined;
+    }
+
+    const API_GATEWAY_ARN_REGEX = `^arn:aws:apigateway:${IntegrationTestClient.getRegion()}::/(rest)?apis/(?<id>[a-z0-9]+)$`;
+
+    const resourceMatches = resourceARNs
+      .map((a) => a?.match(API_GATEWAY_ARN_REGEX))
+      .filter((m) => m);
+
+    if (resourceMatches.length === 0) {
+      throw new Error(`No ARNs matched the expected pattern: ${JSON.stringify(resourceARNs)}`);
+    }
+
+    const apiGatewayUrl = `https://${
+      resourceMatches[0]?.groups?.id
+    }.execute-api.${IntegrationTestClient.getRegion()}.amazonaws.com`;
+
+    return apiGatewayUrl;
+  }
+
   getQueueUrlByStackId(targetStackId: string): string | undefined {
     //
     const arn = this.getResourceArnByStackId(targetStackId);
