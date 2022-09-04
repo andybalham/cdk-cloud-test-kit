@@ -116,10 +116,10 @@ export default class NotificationHubTestStack extends IntegrationTestStack {
     );
 
     // https://docs.webhook.site/
-    this.addEventBridgeRuleTargetWebhookAsync(
-      sourceRule,
-      'https://webhook.site/f2753757-733f-4d0f-935e-5e71187a15c4'
-    );
+    // this.addEventBridgeRuleTargetWebhookAsync(
+    //   sourceRule,
+    //   'https://webhook.site/f2753757-733f-4d0f-935e-5e71187a15c4'
+    // );
 
     // https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html
     // https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns-content-based-filtering.html

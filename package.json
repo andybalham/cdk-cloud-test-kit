@@ -84,6 +84,7 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
-    "nanoid": "^3.0.0"
+    "nanoid": "^3.0.0",
+    "node-fetch": "^2.6.7"
   }
 }

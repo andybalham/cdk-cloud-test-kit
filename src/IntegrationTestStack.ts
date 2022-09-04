@@ -132,14 +132,23 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
     return rule;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async addEventBridgeRuleTargetWebhookAsync(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    rule: events.Rule,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    url: string
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ): Promise<void> {}
+  // TODO 04Sep22: What is the plan to implement this?
+  // async addEventBridgeRuleTargetWebhookAsync(
+  //   rule: events.Rule,
+  //   url: string
+  // ): Promise<void> {}
+
+  addTestFunction(testFunction: lambda.Function): lambda.Function {
+    //
+    testFunction.addEnvironment('FUNCTION_ID', testFunction.node.id);
+    testFunction.addEnvironment('INTEGRATION_TEST_TABLE_NAME', this.integrationTestTable.tableName);
+
+    this.integrationTestTable.grantReadWriteData(testFunction);
+
+    this.testFunctions[testFunction.node.id] = testFunction;
+
+    return testFunction;
+  }
 
   private newTestFunction(functionId: string): lambda.IFunction {
     //
