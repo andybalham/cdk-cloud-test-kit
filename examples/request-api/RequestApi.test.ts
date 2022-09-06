@@ -29,16 +29,14 @@ describe('RequestApi Tests', () => {
 
     const requestApiUrl = `${requestApiBaseUrl}/prod/requests`;
 
-    console.log(JSON.stringify({ requestApiUrl }, null, 2));
-
     const loanApplicationDetails: LoanApplicationDetails = {
       personalDetails: {
         firstName: 'Alex',
         lastName: 'Pritchard',
-        ssn: '001-003-1234',
+        niNumber: 'AB123456C',
         address: {
           lines: ['999 Letsby Avenue', 'Plodville'],
-          zipCode: 'CA: 90210',
+          postcode: 'AB1 2CD',
         },
       },
       loanDetails: {
@@ -53,9 +51,9 @@ describe('RequestApi Tests', () => {
 
     expect(response.status).to.equal(201);
 
-    // TODO 04Sep22: Assert the body reference
+    const { applicationReference } = response.data;
 
-    console.log(JSON.stringify({ status: response.status, data: response.data }, null, 2));
+    expect(applicationReference).to.not.be.undefined;
 
     // Await
 
@@ -67,8 +65,10 @@ describe('RequestApi Tests', () => {
 
     expect(timedOut, 'timedOut').to.be.false;
 
-    console.log(JSON.stringify({ observations }, null, 2));
+    const { actualEventDetail, actualLoanApplicationDetails } = observations[0].data;
 
-    // TODO 04Sep22: Assert observation
+    expect(actualEventDetail.data.loanApplicationReference).to.equal(applicationReference);
+
+    expect(actualLoanApplicationDetails).to.deep.equal(loanApplicationDetails);
   });
 });

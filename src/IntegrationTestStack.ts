@@ -138,14 +138,23 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
   //   url: string
   // ): Promise<void> {}
 
-  addTestFunction(testFunction: lambda.Function): lambda.Function {
+  addTestFunction(testFunction: lambda.Function, functionIdOverride?: string): lambda.Function {
     //
-    testFunction.addEnvironment('FUNCTION_ID', testFunction.node.id);
+    const functionId = functionIdOverride ?? testFunction.node.id;
+
+    testFunction.addEnvironment('FUNCTION_ID', functionId);
+
+    if (this.integrationTestTable === undefined) {
+      throw new Error(
+        'No integration test table specified. Set integrationTestTable to true in IntegrationTestStackProps.'
+      );
+    }
+
     testFunction.addEnvironment('INTEGRATION_TEST_TABLE_NAME', this.integrationTestTable.tableName);
 
     this.integrationTestTable.grantReadWriteData(testFunction);
 
-    this.testFunctions[testFunction.node.id] = testFunction;
+    this.testFunctions[functionId] = testFunction;
 
     return testFunction;
   }

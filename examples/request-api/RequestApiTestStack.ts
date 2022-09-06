@@ -14,7 +14,7 @@ export default class RequestApiTestStack extends IntegrationTestStack {
 
   static readonly RequestApiId = 'RequestApi';
 
-  static readonly EventAsserterId = 'EventAsserter';
+  static readonly EventObserverId = 'EventObserver';
 
   constructor(scope: Construct, id: string) {
     super(scope, id, {
@@ -34,14 +34,14 @@ export default class RequestApiTestStack extends IntegrationTestStack {
     });
 
     this.addTestFunction(
-      new NodejsFunction(this, RequestApiTestStack.EventAsserterId, {
+      new NodejsFunction(this, RequestApiTestStack.EventObserverId, {
         logRetention: RetentionDays.ONE_DAY,
       })
     );
 
     this.addEventBridgeRuleTargetFunction(
       loanApplicationSubmittedRule,
-      RequestApiTestStack.EventAsserterId
+      RequestApiTestStack.EventObserverId
     );
 
     // SUT

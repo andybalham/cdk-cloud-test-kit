@@ -11,11 +11,11 @@ export interface LoanDetails {
 export interface PersonalDetails {
   firstName: string;
   lastName: string;
-  ssn: string;
+  niNumber: string;
   address: Address;
 }
 
 export interface Address {
   lines: string[];
-  zipCode: string;
+  postcode: string;
 }
