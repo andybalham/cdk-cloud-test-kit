@@ -13,10 +13,28 @@
     "exts",
     "hotswap",
     "istanbuljs",
+    "Letsby",
     "nanoid",
+    "nolookalikes",
+    "Plodville",
     "resourcegroupstaggingapi",
     "stepfunctions",
     "TRes",
     "vars"
+  ],
+  "serverlessConsole.services": [
+    {
+      "type": "cloudformation",
+      "title": "Request API",
+      "timeOffsetInMs": 0,
+      "awsProfile": "default",
+      "stacks": [
+        {
+          "region": "eu-west-2",
+          "stackName": "RequestApiTestStack",
+          "stage": "dev"
+        }
+      ]
+    }
   ]
 }

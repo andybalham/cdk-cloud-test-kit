@@ -43,6 +43,19 @@ export default class TestFunctionClient {
     return currentTestItem.props;
   }
 
+  async recordObservationDataAsync(data: Record<string, any>): Promise<void> {
+    //
+    const functionId = process.env.FUNCTION_ID;
+
+    if (functionId === undefined) throw new Error('functionId === undefined');
+
+    await this.recordObservationAsync({
+      observerId: functionId,
+      timestamp: Date.now(),
+      data,
+    });
+  }
+
   async recordObservationAsync(observation: TestObservation): Promise<void> {
     //
     if (integrationTestTableName === undefined)

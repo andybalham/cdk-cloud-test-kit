@@ -1,0 +1,74 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable no-console */
+import axios from 'axios';
+import { expect } from 'chai';
+import { IntegrationTestClient } from '../../src';
+import { LoanApplicationDetails } from './domain-models';
+import RequestApiTestStack from './RequestApiTestStack';
+
+describe('RequestApi Tests', () => {
+  //
+  const testClient = new IntegrationTestClient({
+    testStackId: RequestApiTestStack.Id,
+  });
+
+  let requestApiBaseUrl: string | undefined;
+
+  before(async () => {
+    await testClient.initialiseClientAsync();
+
+    requestApiBaseUrl = testClient.getApiGatewayBaseUrlByStackId(RequestApiTestStack.RequestApiId);
+  });
+
+  beforeEach(async () => {
+    await testClient.initialiseTestAsync();
+  });
+
+  it(`Does something`, async () => {
+    // Arrange
+
+    const requestApiUrl = `${requestApiBaseUrl}/prod/requests`;
+
+    const loanApplicationDetails: LoanApplicationDetails = {
+      personalDetails: {
+        firstName: 'Alex',
+        lastName: 'Pritchard',
+        niNumber: 'AB123456C',
+        address: {
+          lines: ['999 Letsby Avenue', 'Plodville'],
+          postcode: 'AB1 2CD',
+        },
+      },
+      loanDetails: {
+        amount: 10000,
+        termMonths: 24,
+      },
+    };
+
+    // Act
+
+    const response = await axios.post(requestApiUrl, loanApplicationDetails);
+
+    expect(response.status).to.equal(201);
+
+    const { applicationReference } = response.data;
+
+    expect(applicationReference).to.not.be.undefined;
+
+    // Await
+
+    const { observations, timedOut } = await testClient.pollTestAsync({
+      until: async (o) => o.length > 0,
+    });
+
+    // Assert
+
+    expect(timedOut, 'timedOut').to.be.false;
+
+    const { actualEventDetail, actualLoanApplicationDetails } = observations[0].data;
+
+    expect(actualEventDetail.data.loanApplicationReference).to.equal(applicationReference);
+
+    expect(actualLoanApplicationDetails).to.deep.equal(loanApplicationDetails);
+  });
+});

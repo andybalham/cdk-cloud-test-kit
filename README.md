@@ -40,3 +40,7 @@ This example demonstrates how the toolkit can be used to test step functions. It
 ### [Notification Hub](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/notification-hub)
 
 This example shows how the toolkit can be used to put events on an EventBridge event bus. It also shows how the toolkit can be used to test event patterns, both prior to deployment and also once the rules are deployed.
+
+### [Request API](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/examples/request-api)
+
+This example shows how the toolkit can be used to help invoke API Gateway instances and how it can be used to create custom observers that can be used to record any sort of observation you like.
