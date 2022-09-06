@@ -29,10 +29,6 @@ export default class RequestApiTestStack extends IntegrationTestStack {
 
     const eventBus = new EventBus(this, 'EventBus');
 
-    const loanApplicationSubmittedRule = this.addEventBridgePatternRule('Rule', eventBus, {
-      detailType: [EventDetailType.LoanApplicationSubmitted],
-    });
-
     this.addTestFunction(
       new NodejsFunction(this, RequestApiTestStack.EventObserverId, {
         logRetention: RetentionDays.ONE_DAY,
@@ -40,7 +36,9 @@ export default class RequestApiTestStack extends IntegrationTestStack {
     );
 
     this.addEventBridgeRuleTargetFunction(
-      loanApplicationSubmittedRule,
+      this.addEventBridgePatternRule('Rule', eventBus, {
+        detailType: [EventDetailType.LoanApplicationSubmitted],
+      }),
       RequestApiTestStack.EventObserverId
     );
 

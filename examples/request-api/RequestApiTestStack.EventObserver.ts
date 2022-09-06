@@ -9,8 +9,6 @@ import { LoanApplicationDetails } from './domain-models';
 
 const testFunctionClient = new TestFunctionClient();
 
-// TODO 04Sep22: Change this to be an observer
-
 export const handler = async (
   event: EventBridgeEvent<'LoanApplicationSubmitted', LoanApplicationSubmitted>
 ): Promise<any> => {
