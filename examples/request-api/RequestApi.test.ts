@@ -24,7 +24,7 @@ describe('RequestApi Tests', () => {
     await testClient.initialiseTestAsync();
   });
 
-  it(`Does something`, async () => {
+  it(`publishes event as expected`, async () => {
     // Arrange
 
     const requestApiUrl = `${requestApiBaseUrl}/prod/requests`;

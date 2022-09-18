@@ -13,10 +13,10 @@ import { TestProps } from './TestProps';
 
 const integrationTestTableName = process.env.INTEGRATION_TEST_TABLE_NAME;
 
-const documentClient = new DocumentClient();
-
 export default class TestFunctionClient {
   //
+  constructor(public documentClient: DocumentClient) {}
+
   async getTestPropsAsync(): Promise<TestProps> {
     //
     if (integrationTestTableName === undefined)
@@ -31,7 +31,7 @@ export default class TestFunctionClient {
       },
     };
 
-    const testQueryOutput = await documentClient.query(testQueryParams).promise();
+    const testQueryOutput = await this.documentClient.query(testQueryParams).promise();
 
     if (testQueryOutput.Items?.length !== 1)
       throw new Error(
@@ -71,7 +71,7 @@ export default class TestFunctionClient {
       observation,
     };
 
-    await documentClient
+    await this.documentClient
       .put({
         TableName: integrationTestTableName,
         Item: testOutputItem,
@@ -99,7 +99,9 @@ export default class TestFunctionClient {
       },
     };
 
-    const functionStateQueryOutput = await documentClient.query(functionStateQueryParams).promise();
+    const functionStateQueryOutput = await this.documentClient
+      .query(functionStateQueryParams)
+      .promise();
 
     if (
       functionStateQueryOutput.Items === undefined ||
@@ -129,7 +131,7 @@ export default class TestFunctionClient {
       state,
     };
 
-    await documentClient
+    await this.documentClient
       .put({
         TableName: integrationTestTableName,
         Item: functionStateItem,
