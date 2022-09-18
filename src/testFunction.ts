@@ -1,8 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import TestFunctionClient from './TestFunctionClient';
 
-const testFunctionClient = new TestFunctionClient();
+const testFunctionClient = new TestFunctionClient(new DocumentClient());
 
 const functionId = process.env.FUNCTION_ID;
 

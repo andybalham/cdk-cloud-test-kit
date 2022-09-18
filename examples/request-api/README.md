@@ -79,7 +79,7 @@ The `cdk-cloud-test-kit` makes it easy to add simple observer functions that ret
 To do this, we create the handler as show below. It uses the `fetch` npm package to use the pre-signed URL to retrieve the S3 object, then records the event detail along with the retrieved data.
 
 ```TypeScript
-const testFunctionClient = new TestFunctionClient();
+const testFunctionClient = new TestFunctionClient(new DocumentClient());
 
 export const handler = async (
   event: EventBridgeEvent<'LoanApplicationSubmitted', LoanApplicationSubmitted>
