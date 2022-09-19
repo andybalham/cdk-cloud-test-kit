@@ -2,13 +2,12 @@
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import { EventBridgeEvent } from 'aws-lambda/trigger/eventbridge';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import fetch from 'node-fetch';
 import TestFunctionClient from '../../src/TestFunctionClient';
 import { LoanApplicationSubmitted } from './domain-events';
 import { LoanApplicationDetails } from './domain-models';
 
-const testFunctionClient = new TestFunctionClient(new DocumentClient());
+const testFunctionClient = new TestFunctionClient();
 
 export const handler = async (
   event: EventBridgeEvent<'LoanApplicationSubmitted', LoanApplicationSubmitted>
