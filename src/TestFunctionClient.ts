@@ -20,10 +20,10 @@ import { TestProps } from './TestProps';
 
 // const integrationTestTableName = process.env.INTEGRATION_TEST_TABLE_NAME;
 
+const documentClient = new DocumentClient();
+
 export default class TestFunctionClient {
   //
-  constructor(public documentClient: DocumentClient) {}
-
   async getTestPropsAsync(): Promise<TestProps> {
     //
     return getTestPropsAsync(documentClient);
