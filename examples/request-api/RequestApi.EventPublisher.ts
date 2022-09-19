@@ -74,6 +74,8 @@ export const handler = async (event: APIGatewayEvent): Promise<any> => {
     },
   };
 
+  console.log(JSON.stringify({ loanApplicationSubmitted }, null, 2));
+
   const requestEntry: PutEventsRequestEntry = {
     Source: `${loanApplicationSubmitted.metadata.domain}.${loanApplicationSubmitted.metadata.service}`,
     DetailType: EventDetailType.LoanApplicationSubmitted,

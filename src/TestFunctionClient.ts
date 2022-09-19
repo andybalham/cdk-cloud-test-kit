@@ -1,17 +1,24 @@
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { nanoid } from 'nanoid';
+// import { nanoid } from 'nanoid';
 import {
-  CurrentTestItem,
-  FunctionStateTestItem,
-  ObservationTestItem,
-  TestItemPrefix,
-} from './TestItems';
+  getFunctionStateAsync,
+  getTestPropsAsync,
+  recordObservationAsync,
+  recordObservationDataAsync,
+  setFunctionStateAsync,
+} from './testFunctionLib';
+// import {
+//   CurrentTestItem,
+//   FunctionStateTestItem,
+//   ObservationTestItem,
+//   TestItemPrefix,
+// } from './TestItems';
 import TestObservation from './TestObservation';
 import { TestProps } from './TestProps';
 
-const integrationTestTableName = process.env.INTEGRATION_TEST_TABLE_NAME;
+// const integrationTestTableName = process.env.INTEGRATION_TEST_TABLE_NAME;
 
 export default class TestFunctionClient {
   //
@@ -19,64 +26,70 @@ export default class TestFunctionClient {
 
   async getTestPropsAsync(): Promise<TestProps> {
     //
-    if (integrationTestTableName === undefined)
-      throw new Error('integrationTestTableName === undefined');
+    return getTestPropsAsync(documentClient);
 
-    const testQueryParams /*: QueryInput */ = {
-      // QueryInput results in a 'Condition parameter type does not match schema type'
-      TableName: integrationTestTableName,
-      KeyConditionExpression: `PK = :PK`,
-      ExpressionAttributeValues: {
-        ':PK': 'Current',
-      },
-    };
+    // if (integrationTestTableName === undefined)
+    //   throw new Error('integrationTestTableName === undefined');
 
-    const testQueryOutput = await this.documentClient.query(testQueryParams).promise();
+    // const testQueryParams /*: QueryInput */ = {
+    //   // QueryInput results in a 'Condition parameter type does not match schema type'
+    //   TableName: integrationTestTableName,
+    //   KeyConditionExpression: `PK = :PK`,
+    //   ExpressionAttributeValues: {
+    //     ':PK': 'Current',
+    //   },
+    // };
 
-    if (testQueryOutput.Items?.length !== 1)
-      throw new Error(
-        'No current test item found in the integration test table. Are you missing a call to initialiseTestAsync?'
-      );
+    // const testQueryOutput = await documentClient.query(testQueryParams).promise();
 
-    const currentTestItem = testQueryOutput.Items[0] as CurrentTestItem;
+    // if (testQueryOutput.Items?.length !== 1)
+    //   throw new Error(
+    //     'No current test item found in the integration test table. Are you missing a call to initialiseTestAsync?'
+    //   );
 
-    return currentTestItem.props;
+    // const currentTestItem = testQueryOutput.Items[0] as CurrentTestItem;
+
+    // return currentTestItem.props;
   }
 
   async recordObservationDataAsync(data: Record<string, any>): Promise<void> {
     //
-    const functionId = process.env.FUNCTION_ID;
+    await recordObservationDataAsync(documentClient, data);
 
-    if (functionId === undefined) throw new Error('functionId === undefined');
+    // const functionId = process.env.FUNCTION_ID;
 
-    await this.recordObservationAsync({
-      observerId: functionId,
-      timestamp: Date.now(),
-      data,
-    });
+    // if (functionId === undefined) throw new Error('functionId === undefined');
+
+    // await this.recordObservationAsync({
+    //   observerId: functionId,
+    //   timestamp: Date.now(),
+    //   data,
+    // });
   }
 
   async recordObservationAsync(observation: TestObservation): Promise<void> {
     //
-    if (integrationTestTableName === undefined)
-      throw new Error('integrationTestTableName === undefined');
+    await recordObservationAsync(documentClient, observation);
 
-    const { testId } = await this.getTestPropsAsync();
+    // if (integrationTestTableName === undefined)
+    //   throw new Error('integrationTestTableName === undefined');
 
-    const now = Date.now().toString().slice(6);
+    // const { testId } = await this.getTestPropsAsync();
 
-    const testOutputItem: ObservationTestItem = {
-      PK: testId,
-      SK: `${TestItemPrefix.TestObservation}-${now}-${nanoid(10)}`,
-      observation,
-    };
+    // const now = Date.now().toString().slice(6);
 
-    await this.documentClient
-      .put({
-        TableName: integrationTestTableName,
-        Item: testOutputItem,
-      })
-      .promise();
+    // const testOutputItem: ObservationTestItem = {
+    //   PK: testId,
+    //   SK: `${TestItemPrefix.TestObservation}-${now}-${nanoid(10)}`,
+    //   observation,
+    // };
+
+    // await documentClient
+    //   .put({
+    //     TableName: integrationTestTableName,
+    //     Item: testOutputItem,
+    //   })
+    //   .promise();
   }
 
   async getFunctionStateAsync(
@@ -84,58 +97,60 @@ export default class TestFunctionClient {
     initialState: Record<string, any>
   ): Promise<Record<string, any>> {
     //
-    if (integrationTestTableName === undefined)
-      throw new Error('integrationTestTableName === undefined');
+    return getFunctionStateAsync(documentClient, functionId, initialState);
 
-    const { testId } = await this.getTestPropsAsync();
+    // if (integrationTestTableName === undefined)
+    //   throw new Error('integrationTestTableName === undefined');
 
-    const functionStateQueryParams /*: QueryInput */ = {
-      // QueryInput results in a 'Condition parameter type does not match schema type'
-      TableName: integrationTestTableName,
-      KeyConditionExpression: `PK = :PK and SK = :SK`,
-      ExpressionAttributeValues: {
-        ':PK': testId,
-        ':SK': `${TestItemPrefix.FunctionState}-${functionId}`,
-      },
-    };
+    // const { testId } = await this.getTestPropsAsync();
 
-    const functionStateQueryOutput = await this.documentClient
-      .query(functionStateQueryParams)
-      .promise();
+    // const functionStateQueryParams /*: QueryInput */ = {
+    //   // QueryInput results in a 'Condition parameter type does not match schema type'
+    //   TableName: integrationTestTableName,
+    //   KeyConditionExpression: `PK = :PK and SK = :SK`,
+    //   ExpressionAttributeValues: {
+    //     ':PK': testId,
+    //     ':SK': `${TestItemPrefix.FunctionState}-${functionId}`,
+    //   },
+    // };
 
-    if (
-      functionStateQueryOutput.Items === undefined ||
-      functionStateQueryOutput.Items.length === 0
-    ) {
-      return initialState;
-    }
+    // const functionStateQueryOutput = await documentClient.query(functionStateQueryParams).promise();
 
-    if (functionStateQueryOutput.Items.length > 1)
-      throw new Error('functionStateQueryOutput.Items.length > 1');
+    // if (
+    //   functionStateQueryOutput.Items === undefined ||
+    //   functionStateQueryOutput.Items.length === 0
+    // ) {
+    //   return initialState;
+    // }
 
-    const mockState = functionStateQueryOutput.Items[0].state;
+    // if (functionStateQueryOutput.Items.length > 1)
+    //   throw new Error('functionStateQueryOutput.Items.length > 1');
 
-    return mockState;
+    // const mockState = functionStateQueryOutput.Items[0].state;
+
+    // return mockState;
   }
 
   async setFunctionStateAsync(functionId: string, state: Record<string, any>): Promise<void> {
     //
-    if (integrationTestTableName === undefined)
-      throw new Error('integrationTestTableName === undefined');
+    await setFunctionStateAsync(documentClient, functionId, state);
 
-    const { testId } = await this.getTestPropsAsync();
+    // if (integrationTestTableName === undefined)
+    //   throw new Error('integrationTestTableName === undefined');
 
-    const functionStateItem: FunctionStateTestItem = {
-      PK: testId,
-      SK: `${TestItemPrefix.FunctionState}-${functionId}`,
-      state,
-    };
+    // const { testId } = await this.getTestPropsAsync();
 
-    await this.documentClient
-      .put({
-        TableName: integrationTestTableName,
-        Item: functionStateItem,
-      })
-      .promise();
+    // const functionStateItem: FunctionStateTestItem = {
+    //   PK: testId,
+    //   SK: `${TestItemPrefix.FunctionState}-${functionId}`,
+    //   state,
+    // };
+
+    // await documentClient
+    //   .put({
+    //     TableName: integrationTestTableName,
+    //     Item: functionStateItem,
+    //   })
+    //   .promise();
   }
 }
