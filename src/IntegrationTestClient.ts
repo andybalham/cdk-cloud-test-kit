@@ -239,10 +239,12 @@ export default class IntegrationTestClient {
   }
 
   async pollTestAsync({
+    filterById,
     until,
     intervalSeconds = 2,
     timeoutSeconds = 12,
   }: {
+    filterById?: string;
     until: (o: TestObservation[]) => Promise<boolean>;
     intervalSeconds?: number;
     timeoutSeconds?: number;
@@ -268,6 +270,15 @@ export default class IntegrationTestClient {
 
       // eslint-disable-next-line no-await-in-loop
       observations = await this.getTestObservationsAsync();
+
+      if (filterById) {
+        // eslint-disable-next-line no-await-in-loop
+        observations = TestObservation.filterById(observations, filterById);
+      }
+    }
+
+    if (filterById) {
+      observations = TestObservation.filterById(observations, filterById);
     }
 
     return {

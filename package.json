@@ -1,6 +1,6 @@
 {
   "name": "@andybalham/cdk-cloud-test-kit",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A toolkit for cloud-based testing of CDK applications",
   "main": "index.js",
   "types": "index.d.ts",
