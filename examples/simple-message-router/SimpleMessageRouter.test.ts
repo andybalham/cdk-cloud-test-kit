@@ -106,9 +106,9 @@ describe('SimpleMessageRouter Test Suite', () => {
 
     // Await
 
-    const { observations, timedOut } = await testClient.pollTestAsync({
-      until: async (o) =>
-        TestObservation.getCountById(o, TestStack.PositiveOutputDLQConsumerId) > 0,
+    const { observations: positiveDLQObservations, timedOut } = await testClient.pollTestAsync({
+      filterById: TestStack.PositiveOutputDLQConsumerId,
+      until: async (o) => o.length > 0,
       intervalSeconds: 2,
       timeoutSeconds: 12,
     });
@@ -116,11 +116,6 @@ describe('SimpleMessageRouter Test Suite', () => {
     // Assert
 
     expect(timedOut, 'timedOut').to.be.false;
-
-    const positiveDLQObservations = TestObservation.filterById(
-      observations,
-      TestStack.PositiveOutputDLQConsumerId
-    );
 
     expect(positiveDLQObservations.length).to.be.greaterThanOrEqual(1);
   });
