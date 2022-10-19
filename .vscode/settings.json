@@ -26,8 +26,16 @@
     "[Default Dark+]": {
       "titleBar.activeBackground": "#130049",
       "activityBar.background": "#130049",
-      "activityBar.activeBackground": "#2f00af",
+      "activityBar.activeBackground": "#5a3bb1",
       "sideBar.background": "#0b0029"
+    },
+    "[Default Light+]": {
+      "titleBar.activeBackground": "#7d4ffc",
+      "titleBar.activeForeground": "#ffffff",
+      "activityBar.background": "#5f29f5",
+      "activityBar.activeBackground": "#7d4ffc",
+      "sideBar.background": "#dad1f1",
+      "terminal.background": "#e1ddeb"
     }
   },
   "serverlessConsole.services": [
