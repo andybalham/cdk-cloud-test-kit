@@ -1,12 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { nanoid } from 'nanoid';
-import {
-  CurrentTestItem,
-  FunctionStateTestItem,
-  ObservationTestItem,
-  TestItemPrefix,
-} from './TestItems';
+import { putItemAsync, queryItemsAsync } from '../@andybalham/aws-helpers/dynamodb-helpers';
+import { FunctionStateTestItem, ObservationTestItem, TestItemPrefix } from './TestItems';
 import TestObservation from './TestObservation';
 import { TestProps } from './TestProps';
 
@@ -17,25 +13,21 @@ export const getTestPropsAsync = async (documentClient: DocumentClient): Promise
   if (integrationTestTableName === undefined)
     throw new Error('integrationTestTableName === undefined');
 
-  const testQueryParams /*: QueryInput */ = {
-    // QueryInput results in a 'Condition parameter type does not match schema type'
-    TableName: integrationTestTableName,
-    KeyConditionExpression: `PK = :PK`,
-    ExpressionAttributeValues: {
-      ':PK': 'Current',
+  const currentTestItems = await queryItemsAsync<Record<string, any>>({
+    documentClient,
+    tableName: integrationTestTableName,
+    partitionKeyName: 'PK',
+    queryInput: {
+      partitionKeyValue: 'Current',
     },
-  };
+  });
 
-  const testQueryOutput = await documentClient.query(testQueryParams).promise();
-
-  if (testQueryOutput.Items?.length !== 1)
+  if (currentTestItems.length !== 1)
     throw new Error(
       'No current test item found in the integration test table. Are you missing a call to initialiseTestAsync?'
     );
 
-  const currentTestItem = testQueryOutput.Items[0] as CurrentTestItem;
-
-  return currentTestItem.props;
+  return currentTestItems[0].props;
 };
 
 export const recordObservationAsync = async (
@@ -56,12 +48,11 @@ export const recordObservationAsync = async (
     observation,
   };
 
-  await documentClient
-    .put({
-      TableName: integrationTestTableName,
-      Item: testOutputItem,
-    })
-    .promise();
+  await putItemAsync({
+    documentClient,
+    tableName: integrationTestTableName,
+    item: testOutputItem,
+  });
 };
 
 export const recordObservationDataAsync = async (
@@ -97,12 +88,11 @@ export const setFunctionStateAsync = async (
     state,
   };
 
-  await documentClient
-    .put({
-      TableName: integrationTestTableName,
-      Item: functionStateItem,
-    })
-    .promise();
+  await putItemAsync({
+    documentClient,
+    tableName: integrationTestTableName,
+    item: functionStateItem,
+  });
 };
 
 export const getFunctionStateAsync = async (
@@ -116,26 +106,24 @@ export const getFunctionStateAsync = async (
 
   const { testId } = await getTestPropsAsync(documentClient);
 
-  const functionStateQueryParams /*: QueryInput */ = {
-    // QueryInput results in a 'Condition parameter type does not match schema type'
-    TableName: integrationTestTableName,
-    KeyConditionExpression: `PK = :PK and SK = :SK`,
-    ExpressionAttributeValues: {
-      ':PK': testId,
-      ':SK': `${TestItemPrefix.FunctionState}-${functionId}`,
+  const functionStateItems = await queryItemsAsync<Record<string, any>>({
+    documentClient,
+    tableName: integrationTestTableName,
+    partitionKeyName: 'PK',
+    sortKeyName: 'SK',
+    queryInput: {
+      partitionKeyValue: testId,
+      sortKeyValue: `${TestItemPrefix.FunctionState}-${functionId}`,
     },
-  };
+  });
 
-  const functionStateQueryOutput = await documentClient.query(functionStateQueryParams).promise();
-
-  if (functionStateQueryOutput.Items === undefined || functionStateQueryOutput.Items.length === 0) {
+  if (functionStateItems.length === 0) {
     return initialState;
   }
 
-  if (functionStateQueryOutput.Items.length > 1)
-    throw new Error('functionStateQueryOutput.Items.length > 1');
+  if (functionStateItems.length > 1) throw new Error('functionStateItems.length > 1');
 
-  const mockState = functionStateQueryOutput.Items[0].state;
+  const mockState = functionStateItems[0].state;
 
   return mockState;
 };

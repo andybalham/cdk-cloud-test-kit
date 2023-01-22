@@ -1,38 +1,32 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable import/no-extraneous-dependencies */
+import { DynamoDBRecord } from 'aws-lambda';
 import AWS from 'aws-sdk';
-import { clearAllItems, getItem } from './dynamoDb';
+import {
+  DynamoDBTableClient,
+  DynamoDBTableClientFactory,
+} from '../@andybalham/aws-helpers/DynamoDBTableClient';
 
 export default class DynamoDBTestClient {
   //
-  readonly db: AWS.DynamoDB.DocumentClient;
+  readonly tableClient: DynamoDBTableClient;
 
   constructor(public readonly region: string, public readonly tableName: string) {
-    this.db = new AWS.DynamoDB.DocumentClient({ region });
+    this.tableClient = new DynamoDBTableClientFactory().build({
+      region,
+      tableName,
+      documentClient: new AWS.DynamoDB.DocumentClient({ region }),
+    });
   }
 
   async clearAllItemsAsync(): Promise<void> {
-    await clearAllItems(this.region, this.tableName);
+    await this.tableClient.deleteAllItemsAsync();
   }
 
   async getItemAsync<T>(key: Record<string, any> | undefined): Promise<T | undefined> {
-    //
-    if (key === undefined) {
-      return undefined;
-    }
-
-    return getItem(this.region, this.tableName, key) as unknown as T;
+    return this.tableClient.getItemAsync<T>(key);
   }
 
-  async getItemByEventKeyAsync<T>(
-    eventKey: { [key: string]: AWS.DynamoDB.AttributeValue } | undefined
-  ): Promise<T | undefined> {
-    //
-    if (eventKey === undefined) {
-      return undefined;
-    }
-
-    const key = AWS.DynamoDB.Converter.unmarshall(eventKey);
-
-    return getItem(this.region, this.tableName, key) as unknown as T;
+  async getItemByEventRecordAsync<T>(record: DynamoDBRecord): Promise<T | undefined> {
+    return this.tableClient.getItemByEventRecordAsync(record);
   }
 }

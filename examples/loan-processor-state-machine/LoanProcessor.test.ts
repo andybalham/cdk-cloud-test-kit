@@ -91,9 +91,7 @@ describe('LoanProcessor Tests', () => {
 
     expect(loanTableEventRecord.eventName).to.equal('INSERT');
 
-    const loanItem = await loanTable.getItemByEventKeyAsync<LoanItem>(
-      loanTableEventRecord.dynamodb?.Keys
-    );
+    const loanItem = await loanTable.getItemByEventRecordAsync<LoanItem>(loanTableEventRecord);
 
     expect(loanItem?.loanDetails).to.deep.equal(loanDetails);
   });

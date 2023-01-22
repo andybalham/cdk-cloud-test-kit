@@ -35,6 +35,7 @@
       "activityBar.background": "#5f29f5",
       "activityBar.activeBackground": "#7d4ffc",
       "sideBar.background": "#dad1f1",
+      "panel.background": "#dad1f1",
       "terminal.background": "#e1ddeb"
     }
   },
