@@ -32,10 +32,10 @@ export interface DynamoDBTableClientProps {
  * Provides a wrapper around `DocumentClient` for a specific table.
  */
 export class DynamoDBTableClient {
-  documentClient: DocumentClient;
+  awsDocumentClient: DocumentClient;
 
   constructor(public readonly props: DynamoDBTableClientProps) {
-    this.documentClient = props.documentClient ?? documentClient;
+    this.awsDocumentClient = props.documentClient ?? documentClient;
   }
 
   public get tableName(): string {
@@ -60,12 +60,12 @@ export class DynamoDBTableClient {
   }
 
   async putItemAsync(item: Record<string, any>): Promise<void> {
-    await putItemAsync({ documentClient: this.documentClient, tableName: this.tableName, item });
+    await putItemAsync({ documentClient: this.awsDocumentClient, tableName: this.tableName, item });
   }
 
   async queryItemsAsync<T>(queryInput: QueryInput): Promise<T[]> {
     return queryItemsAsync<T>({
-      documentClient: this.documentClient,
+      documentClient: this.awsDocumentClient,
       tableName: this.tableName,
       partitionKeyName: this.partitionKeyName,
       sortKeyName: this.sortKeyName,
@@ -78,7 +78,9 @@ export class DynamoDBTableClient {
       return undefined;
     }
 
-    const dbItem = await this.documentClient.get({ TableName: this.tableName, Key: key }).promise();
+    const dbItem = await this.awsDocumentClient
+      .get({ TableName: this.tableName, Key: key })
+      .promise();
 
     // Item is undefined if key not found
     return dbItem.Item as T;
@@ -125,7 +127,7 @@ export class DynamoDBTableClient {
       const maxBatchWriteItemCount = 25;
 
       // eslint-disable-next-line no-await-in-loop
-      const scanResult = await this.documentClient
+      const scanResult = await this.awsDocumentClient
         .scan({
           AttributesToGet: keySchema.map((key) => key.AttributeName),
           TableName: this.tableName,
@@ -142,7 +144,7 @@ export class DynamoDBTableClient {
         }));
 
         // eslint-disable-next-line no-await-in-loop
-        await this.documentClient
+        await this.awsDocumentClient
           .batchWrite({ RequestItems: { [this.tableName]: deleteRequests } })
           .promise();
       }

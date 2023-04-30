@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { nanoid } from 'nanoid';
-import { putItemAsync, queryItemsAsync } from '../@andybalham/aws-helpers/dynamodb-helpers';
+import { putItemAsync, queryItemsAsync } from './@andybalham/aws-helpers/dynamodb-helpers';
 import { FunctionStateTestItem, ObservationTestItem, TestItemPrefix } from './TestItems';
 import TestObservation from './TestObservation';
 import { TestProps } from './TestProps';
@@ -113,7 +113,7 @@ export const getFunctionStateAsync = async (
     sortKeyName: 'SK',
     queryInput: {
       partitionKeyValue: testId,
-      sortKeyValue: `${TestItemPrefix.FunctionState}-${functionId}`,
+      sortKeyCriteria: { value: `${TestItemPrefix.FunctionState}-${functionId}` },
     },
   });
 

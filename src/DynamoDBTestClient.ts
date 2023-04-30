@@ -4,7 +4,7 @@ import AWS from 'aws-sdk';
 import {
   DynamoDBTableClient,
   DynamoDBTableClientFactory,
-} from '../@andybalham/aws-helpers/DynamoDBTableClient';
+} from './@andybalham/aws-helpers/DynamoDBTableClient';
 
 export default class DynamoDBTestClient {
   //

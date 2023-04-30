@@ -1,15 +1,11 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   PaginationToken as ResourcePaginationToken,
   ResourceTagMapping,
   ResourceTagMappingList,
 } from 'aws-sdk/clients/resourcegroupstaggingapi';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import dynamodb from 'aws-sdk/clients/dynamodb';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   EventBus,
   ListEventBusesResponse,
@@ -29,6 +25,11 @@ import DynamoDBTestClient from './DynamoDBTestClient';
 import SQSTestClient from './SQSTestClient';
 import { deleteAllLogs } from './cloudwatch';
 import EventBridgeTestClient from './EventBridgeTestClient';
+import {
+  DynamoDBTableClient,
+  DynamoDBTableClientFactory,
+} from './@andybalham/aws-helpers/DynamoDBTableClient';
+import { SortKeyOperator } from './@andybalham/aws-helpers/dynamodb-helpers';
 
 dotenv.config();
 
@@ -53,7 +54,7 @@ export default class IntegrationTestClient {
 
   testStackEventBuses = new Array<EventBus>();
 
-  integrationTestTableName?: string;
+  integrationTestTableClient?: DynamoDBTableClient;
 
   testId: string;
 
@@ -127,9 +128,19 @@ export default class IntegrationTestClient {
 
     this.testStackEventBuses = await this.getTestStackEventBusesAsync();
 
-    this.integrationTestTableName = this.getTableNameByStackId(
+    const integrationTestTableName = this.getTableNameByStackId(
       IntegrationTestStack.IntegrationTestTableId
     );
+
+    if (integrationTestTableName) {
+      this.integrationTestTableClient = new DynamoDBTableClientFactory({
+        partitionKeyName: 'PK',
+        sortKeyName: 'SK',
+      }).build({
+        region: IntegrationTestClient.getRegion(),
+        tableName: integrationTestTableName,
+      });
+    }
 
     const testFunctionNames = this.testResourceTagMappingList
       .filter((m) => m.ResourceARN?.match(IntegrationTestClient.ResourceNamePatterns.function))
@@ -179,43 +190,24 @@ export default class IntegrationTestClient {
     //
     this.testId = props.testId;
 
-    if (this.integrationTestTableName !== undefined) {
+    if (this.integrationTestTableClient !== undefined) {
       //
       // Clear down all data related to the test
 
-      let testItemKeys = new Array<TestItemKey>();
-
-      let lastEvaluatedKey: dynamodb.Key | undefined;
-
-      do {
-        const testQueryParams /*: QueryInput */ = {
-          // QueryInput results in a 'Condition parameter type does not match schema type'
-          TableName: this.integrationTestTableName,
-          KeyConditionExpression: `PK = :PK`,
-          ExpressionAttributeValues: {
-            ':PK': this.testId,
-          },
-          ExclusiveStartKey: lastEvaluatedKey,
-        };
-
-        // eslint-disable-next-line no-await-in-loop
-        const testQueryOutput = await IntegrationTestClient.db.query(testQueryParams).promise();
-
-        if (testQueryOutput.Items) {
-          testItemKeys = testItemKeys.concat(testQueryOutput.Items.map((i) => i as TestItemKey));
-        }
-
-        lastEvaluatedKey = testQueryOutput.LastEvaluatedKey;
-        //
-      } while (lastEvaluatedKey);
+      const testItemKeys = await this.integrationTestTableClient.queryItemsAsync<TestItemKey>({
+        partitionKeyValue: this.testId,
+      });
 
       if (testItemKeys.length > 0) {
         const deleteRequests = testItemKeys.map((k) => ({
           DeleteRequest: { Key: { PK: k.PK, SK: k.SK } },
         }));
 
-        await IntegrationTestClient.db
-          .batchWrite({ RequestItems: { [this.integrationTestTableName]: deleteRequests } })
+        // TODO: Add this functionality to the table client
+        await this.integrationTestTableClient.awsDocumentClient
+          .batchWrite({
+            RequestItems: { [this.integrationTestTableClient.tableName]: deleteRequests },
+          })
           .promise();
       }
 
@@ -229,12 +221,7 @@ export default class IntegrationTestClient {
         props,
       };
 
-      await IntegrationTestClient.db
-        .put({
-          TableName: this.integrationTestTableName,
-          Item: currentTestItem,
-        })
-        .promise();
+      await this.integrationTestTableClient.putItemAsync(currentTestItem);
     }
   }
 
@@ -289,44 +276,19 @@ export default class IntegrationTestClient {
 
   async getTestObservationsAsync(): Promise<TestObservation[]> {
     //
-    let allObservations = new Array<TestObservation>();
-
-    if (this.integrationTestTableName === undefined) {
-      return allObservations;
+    if (!this.integrationTestTableClient) {
+      return [];
     }
 
-    let lastEvaluatedKey: dynamodb.Key | undefined;
-
-    do {
-      const queryObservationsParams /*: QueryInput */ = {
-        // QueryInput results in a 'Condition parameter type does not match schema type'
-        TableName: this.integrationTestTableName,
-        KeyConditionExpression: `PK = :PK and begins_with(SK, :SKPrefix)`,
-        ExpressionAttributeValues: {
-          ':PK': this.testId,
-          ':SKPrefix': TestItemPrefix.TestObservation,
+    const allObservations = await this.integrationTestTableClient.queryItemsAsync<TestObservation>({
+      partitionKeyValue: this.testId,
+      sortKeyCriteria: {
+        comparison: {
+          operator: SortKeyOperator.BEGINS_WITH,
+          value: TestItemPrefix.TestObservation,
         },
-        ExclusiveStartKey: lastEvaluatedKey,
-      };
-
-      // eslint-disable-next-line no-await-in-loop
-      const queryObservationsOutput = await IntegrationTestClient.db
-        .query(queryObservationsParams)
-        .promise();
-
-      if (!queryObservationsOutput.Items) {
-        return allObservations;
-      }
-
-      const observations = queryObservationsOutput.Items.map(
-        (i) => i.observation as TestObservation
-      );
-
-      allObservations = allObservations.concat(observations);
-
-      lastEvaluatedKey = queryObservationsOutput.LastEvaluatedKey;
-      //
-    } while (lastEvaluatedKey);
+      },
+    });
 
     return allObservations;
   }
