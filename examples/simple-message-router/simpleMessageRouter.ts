@@ -3,10 +3,11 @@
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import { SQSEvent } from 'aws-lambda/trigger/sqs';
-import AWS_SQS, { SQS } from '@aws-sdk/client-sqs';
+import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { Message } from './Message';
 
-const sqs = new SQS({});
+// const sqs = new SQS({});
+const sqs = new SQSClient({});
 
 export const handler = async (event: SQSEvent): Promise<void> => {
   //
@@ -32,13 +33,30 @@ export const handler = async (event: SQSEvent): Promise<void> => {
         ? process.env.POSITIVE_OUTPUT_QUEUE_URL
         : process.env.NEGATIVE_OUTPUT_QUEUE_URL;
 
-    const outputMessageRequest: AWS_SQS.SendMessageCommandInput = {
+    const sendMessageCommand = new SendMessageCommand({
       QueueUrl: outputQueueUrl,
       MessageBody: JSON.stringify(numbersMessage),
-    };
+    });
 
-    const outputMessageResult = await sqs.sendMessage(outputMessageRequest);
+    const sendMessageResponse = await sqs.send(sendMessageCommand);
 
-    console.log(JSON.stringify({ outputMessageResult }, null, 2));
+    console.log(JSON.stringify({ response: sendMessageResponse }, null, 2));
+
+    // // Send an SQS message using v3 sdk
+    // const sendMessageRequest: AWS_SQS.SendMessageRequest = {
+    //   QueueUrl: outputQueueUrl,
+    //   MessageBody: JSON.stringify(numbersMessage),
+
+    // };
+    // await sqs.sendMessage(sendMessageRequest);
+
+    // const outputMessageRequest: AWS_SQS.SendMessageCommandInput = {
+    //   QueueUrl: outputQueueUrl,
+    //   MessageBody: JSON.stringify(numbersMessage),
+    // };
+
+    // const outputMessageResult = await sqs.sendMessage(outputMessageRequest);
+
+    // console.log(JSON.stringify({ outputMessageResult }, null, 2));
   }
 };

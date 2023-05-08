@@ -1,30 +1,32 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import SQS, {
-  MessageBodyAttributeMap,
-  SendMessageRequest,
-  SendMessageResult,
-} from 'aws-sdk/clients/sqs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  MessageAttributeValue,
+  SQSClient,
+  SendMessageCommand,
+  SendMessageCommandInput,
+  SendMessageCommandOutput,
+} from '@aws-sdk/client-sqs';
 
 export default class SQSTestClient {
   //
-  readonly sqs: SQS;
+  readonly sqs: SQSClient;
 
   constructor(public readonly region: string, public readonly queueUrl: string) {
-    this.sqs = new SQS({ region });
+    this.sqs = new SQSClient({ region });
   }
 
   async sendMessageAsync(
     messageBody: Record<string, any>,
-    messageAttributes?: MessageBodyAttributeMap
-  ): Promise<SendMessageResult> {
+    messageAttributes?: Record<string, MessageAttributeValue>
+  ): Promise<SendMessageCommandOutput> {
     //
-    const sendMessageRequest: SendMessageRequest = {
+    const sendMessageRequest: SendMessageCommandInput = {
       QueueUrl: this.queueUrl,
       MessageBody: JSON.stringify(messageBody),
       MessageAttributes: messageAttributes,
     };
 
-    const sendMessageResult = await this.sqs.sendMessage(sendMessageRequest).promise();
+    const sendMessageResult = await this.sqs.send(new SendMessageCommand(sendMessageRequest));
 
     return sendMessageResult;
   }
