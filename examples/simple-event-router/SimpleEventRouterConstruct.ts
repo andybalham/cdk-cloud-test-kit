@@ -31,7 +31,7 @@ export default class SimpleEventRouterConstruct extends Construct {
       scope,
       'SimpleEventRouterFunction',
       {
-        runtime: lambda.Runtime.NODEJS_14_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
         entry: path.join(__dirname, '.', 'simpleEventRouter.ts'),
         handler: 'handler',
         environment: {

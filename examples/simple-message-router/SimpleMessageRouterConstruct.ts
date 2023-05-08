@@ -55,6 +55,7 @@ export default class SimpleMessageRouterConstruct extends Construct {
       scope,
       'SimpleMessageRouterFunction',
       {
+        // TODO 07May23: Upgrade
         runtime: lambda.Runtime.NODEJS_14_X,
         entry: path.join(__dirname, '.', 'simpleMessageRouter.ts'),
         handler: 'handler',

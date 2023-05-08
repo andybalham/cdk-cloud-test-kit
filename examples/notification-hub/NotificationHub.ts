@@ -23,6 +23,8 @@ export default class NotificationHub extends Construct {
       this,
       'PublishCaseEventFunction',
       {
+        // TODO 07May23: Upgrade
+        // runtime: lambda.Runtime.NODEJS_18_X,
         environment: {
           EVENT_BUS_NAME: this.eventBus.eventBusName,
         },

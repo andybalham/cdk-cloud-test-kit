@@ -3,15 +3,26 @@
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import { SNSEvent } from 'aws-lambda/trigger/sns';
-import { SNS } from 'aws-sdk';
-import { PublishInput } from 'aws-sdk/clients/sns';
+// import { SNS } from 'aws-sdk';
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+// import { PublishInput } from 'aws-sdk/clients/sns';
 import { Event } from './Event';
 
-const sns = new SNS();
+// const sns = new SNS();
+const sns = new SNSClient({});
 
 export const handler = async (event: SNSEvent): Promise<void> => {
   //
   console.log(JSON.stringify({ event }, null, 2));
+
+  if (
+    process.env.POSITIVE_OUTPUT_TOPIC_ARN === undefined ||
+    process.env.NEGATIVE_OUTPUT_TOPIC_ARN === undefined
+  ) {
+    throw new Error(
+      'process.env.POSITIVE_OUTPUT_TOPIC_ARN === undefined || process.env.NEGATIVE_OUTPUT_TOPIC_ARN === undefined'
+    );
+  }
 
   for await (const record of event.Records) {
     //
@@ -24,15 +35,13 @@ export const handler = async (event: SNSEvent): Promise<void> => {
         ? process.env.POSITIVE_OUTPUT_TOPIC_ARN
         : process.env.NEGATIVE_OUTPUT_TOPIC_ARN;
 
-    if (outputTopicArn === undefined) throw new Error('outputTopicArn === undefined');
-
-    const outputEventRequest: PublishInput = {
+    const publishCommand = new PublishCommand({
       TopicArn: outputTopicArn,
       Message: JSON.stringify(numbersEvent),
-    };
+    });
 
-    const outputEventResult = await sns.publish(outputEventRequest).promise();
+    const publishResult = await sns.send(publishCommand);
 
-    console.log(JSON.stringify({ outputEventResult }, null, 2));
+    console.log(JSON.stringify({ result: publishResult }, null, 2));
   }
 };
