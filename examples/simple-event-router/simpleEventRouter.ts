@@ -3,12 +3,9 @@
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import { SNSEvent } from 'aws-lambda/trigger/sns';
-// import { SNS } from 'aws-sdk';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
-// import { PublishInput } from 'aws-sdk/clients/sns';
 import { Event } from './Event';
 
-// const sns = new SNS();
 const sns = new SNSClient({});
 
 export const handler = async (event: SNSEvent): Promise<void> => {
