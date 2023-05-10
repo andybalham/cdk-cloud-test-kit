@@ -31,11 +31,11 @@
     },
     "[Default Light+]": {
       "titleBar.activeBackground": "#7d4ffc",
-      "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#5f29f5",
       "activityBar.activeBackground": "#7d4ffc",
       "sideBar.background": "#dad1f1",
-      "terminal.background": "#e1ddeb"
+      "panel.background": "#dad1f1",
+      "terminal.background": "#d8d0ea"
     }
   },
   "serverlessConsole.services": [

@@ -65,8 +65,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               definitionScope,
               'BuildLoanItemFunction',
               {
-                // TODO 07May23: Upgrade
-                // runtime: lambda.Runtime.NODEJS_18_X,
+                runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
               }
             ),

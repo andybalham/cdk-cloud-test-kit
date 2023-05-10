@@ -1,19 +1,24 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import AWS from 'aws-sdk';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ExecutionStatus, HistoryEvent, StartExecutionInput } from 'aws-sdk/clients/stepfunctions';
+import {
+  ExecutionStatus,
+  HistoryEvent,
+  ListExecutionsCommand,
+  SFNClient,
+  StartExecutionCommand,
+  StartExecutionInput,
+} from '@aws-sdk/client-sfn';
 import { getLastEventAsync } from './stepFunctions';
 
 const STEP_FUNCTION_STATE_RUNNING = 'RUNNING';
 
 export default class StepFunctionsTestClient {
   //
-  readonly stepFunctions: AWS.StepFunctions;
+  readonly sfnClient: SFNClient;
 
-  executionArn: string;
+  executionArn: string | undefined;
 
   constructor(private region: string, private stateMachineArn: string) {
-    this.stepFunctions = new AWS.StepFunctions({ region });
+    this.sfnClient = new SFNClient({ region });
   }
 
   async startExecutionAsync(input: Record<string, any>): Promise<void> {
@@ -23,7 +28,9 @@ export default class StepFunctionsTestClient {
       input: JSON.stringify(input),
     };
 
-    const { executionArn } = await this.stepFunctions.startExecution(params).promise();
+    const { executionArn } = await this.sfnClient.send(new StartExecutionCommand(params));
+
+    if (executionArn === undefined) throw new Error('executionArn === undefined');
 
     this.executionArn = executionArn;
   }
@@ -37,20 +44,20 @@ export default class StepFunctionsTestClient {
       stateMachineArn: this.stateMachineArn,
     };
 
-    const result = await this.stepFunctions.listExecutions(opts).promise();
+    const result = await this.sfnClient.send(new ListExecutionsCommand(opts));
 
     const { executions } = result;
 
     const isExecutionFinished =
-      executions &&
-      executions[0] &&
-      executions[0].executionArn === this.executionArn &&
-      executions[0].status !== STEP_FUNCTION_STATE_RUNNING;
+      executions !== undefined &&
+      executions.length > 0 &&
+      executions[0]?.executionArn === this.executionArn &&
+      executions[0]?.status !== STEP_FUNCTION_STATE_RUNNING;
 
     return isExecutionFinished;
   }
 
-  async getStatusAsync(): Promise<ExecutionStatus | undefined> {
+  async getStatusAsync(): Promise<ExecutionStatus | string | undefined> {
     //
     if (this.executionArn === undefined) throw new Error('this.executionArn === undefined');
 
@@ -59,11 +66,11 @@ export default class StepFunctionsTestClient {
       stateMachineArn: this.stateMachineArn,
     };
 
-    const result = await this.stepFunctions.listExecutions(opts).promise();
+    const result = await this.sfnClient.send(new ListExecutionsCommand(opts));
 
     const { executions } = result;
 
-    if (executions && executions[0] && executions[0].executionArn === this.executionArn) {
+    if (executions && executions.length > 0 && executions[0]?.executionArn === this.executionArn) {
       return executions[0].status;
     }
 
