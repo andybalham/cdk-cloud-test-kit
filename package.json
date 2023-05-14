@@ -48,6 +48,7 @@
     "@andybalham/state-machine-builder-v2": "^2.0.1",
     "@andybalham/state-machine-with-graph-v2": "^2.0.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.332.0",
+    "@aws-sdk/client-dynamodb": "^3.332.0",
     "@aws-sdk/client-eventbridge": "^3.332.0",
     "@aws-sdk/client-lambda": "^3.332.0",
     "@aws-sdk/client-s3": "^3.332.0",

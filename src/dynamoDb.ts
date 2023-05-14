@@ -3,34 +3,43 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import AWS = require('aws-sdk');
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  AttributeValue,
+  BatchWriteItemCommand,
+  DescribeTableCommand,
+  DynamoDBClient,
+  GetItemCommand,
+  KeySchemaElement,
+  ScanCommand,
+} from '@aws-sdk/client-dynamodb';
 
-const itemToKey = (
-  item: AWS.DynamoDB.DocumentClient.AttributeMap,
-  keySchema: AWS.DynamoDB.KeySchemaElement[]
-) => {
-  let itemKey: AWS.DynamoDB.DocumentClient.Key = {};
+const itemToKey = (item: Record<string, AttributeValue>, keySchema: KeySchemaElement[]) => {
+  let itemKey: Record<string, AttributeValue> = {};
   keySchema.map((key) => {
-    itemKey = { ...itemKey, [key.AttributeName]: item[key.AttributeName] };
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    itemKey = { ...itemKey, [key.AttributeName!]: item[key.AttributeName!] };
   });
   return itemKey;
 };
 
 export const clearAllItems = async (region: string, tableName: string) => {
   // get the table keys
-  const table = new AWS.DynamoDB({ region });
-  const { Table = {} } = await table.describeTable({ TableName: tableName }).promise();
+  const dynamoDBClient = new DynamoDBClient({ region });
+  const { Table = {} } = await dynamoDBClient.send(
+    new DescribeTableCommand({ TableName: tableName })
+  );
 
   const keySchema = Table.KeySchema || [];
 
   // get the items to delete
-  const db = new AWS.DynamoDB.DocumentClient({ region });
-  const scanResult = await db
-    .scan({
-      AttributesToGet: keySchema.map((key) => key.AttributeName),
+  const scanResult = await dynamoDBClient.send(
+    new ScanCommand({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      AttributesToGet: keySchema.map((key) => key.AttributeName!),
       TableName: tableName,
     })
-    .promise();
+  );
   const items = scanResult.Items || [];
 
   if (items.length > 0) {
@@ -38,30 +47,34 @@ export const clearAllItems = async (region: string, tableName: string) => {
       DeleteRequest: { Key: itemToKey(item, keySchema) },
     }));
 
-    await db.batchWrite({ RequestItems: { [tableName]: deleteRequests } }).promise();
+    await dynamoDBClient.send(
+      new BatchWriteItemCommand({ RequestItems: { [tableName]: deleteRequests } })
+    );
   }
 };
 
 export const writeItems = async (
   region: string,
   tableName: string,
-  items: AWS.DynamoDB.DocumentClient.PutItemInputAttributeMap[]
+  items: Record<string, AttributeValue>[]
 ) => {
-  const db = new AWS.DynamoDB.DocumentClient({ region });
+  const dynamoDBClient = new DynamoDBClient({ region });
   const writeRequests = items.map((item) => ({
     PutRequest: { Item: item },
   }));
 
-  await db.batchWrite({ RequestItems: { [tableName]: writeRequests } }).promise();
+  await dynamoDBClient.send(
+    new BatchWriteItemCommand({ RequestItems: { [tableName]: writeRequests } })
+  );
 };
 
 export const getItem = async (
   region: string,
   tableName: string,
-  key: AWS.DynamoDB.DocumentClient.Key
+  key: Record<string, AttributeValue>
 ) => {
-  const db = new AWS.DynamoDB.DocumentClient({ region });
-  const dbItem = await db.get({ TableName: tableName, Key: key }).promise();
+  const dynamoDBClient = new DynamoDBClient({ region });
+  const dbItem = await dynamoDBClient.send(new GetItemCommand({ TableName: tableName, Key: key }));
   // Item is undefined if key not found
   return dbItem.Item;
 };
