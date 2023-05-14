@@ -47,9 +47,10 @@
   "devDependencies": {
     "@andybalham/state-machine-builder-v2": "^2.0.1",
     "@andybalham/state-machine-with-graph-v2": "^2.0.0",
+    "@aws-sdk/client-s3": "^3.332.0",
     "@aws-sdk/client-sfn": "^3.329.0",
     "@aws-sdk/client-sns": "^3.321.1",
-    "@aws-sdk/client-sqs": "^3.328.0",
+    "@aws-sdk/client-sqs": "^3.332.0",
     "@types/aws-lambda": "^8.10.95",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",

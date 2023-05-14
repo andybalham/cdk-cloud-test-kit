@@ -35,7 +35,7 @@
       "activityBar.activeBackground": "#7d4ffc",
       "sideBar.background": "#dad1f1",
       "panel.background": "#dad1f1",
-      "terminal.background": "#d8d0ea"
+      "terminal.background": "#ebe8f3"
     }
   },
   "serverlessConsole.services": [
