@@ -1,17 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import AWS from 'aws-sdk';
 import {
+  EventBridgeClient,
+  PutEventsCommand,
   PutEventsRequest,
   PutEventsRequestEntry,
   PutEventsResponse,
-} from 'aws-sdk/clients/eventbridge';
+} from '@aws-sdk/client-eventbridge';
 
 export default class EventBridgeTestClient {
   //
-  readonly eventBridge: AWS.EventBridge;
+  readonly eventBridge: EventBridgeClient;
 
   constructor(public readonly region: string, public readonly eventBusArn: string) {
-    this.eventBridge = new AWS.EventBridge({ region });
+    this.eventBridge = new EventBridgeClient({ region });
   }
 
   async putEventAsync(entry: PutEventsRequestEntry): Promise<PutEventsResponse> {
@@ -28,7 +29,7 @@ export default class EventBridgeTestClient {
       })),
     };
 
-    const response = await this.eventBridge.putEvents(request).promise();
+    const response = await this.eventBridge.send(new PutEventsCommand(request));
     return response;
   }
 }

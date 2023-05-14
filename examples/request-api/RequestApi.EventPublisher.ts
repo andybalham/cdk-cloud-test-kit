@@ -3,9 +3,15 @@
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 import { APIGatewayEvent } from 'aws-lambda';
-import EventBridge, { PutEventsRequest, PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
-import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
+import {
+  EventBridgeClient,
+  PutEventsCommand,
+  PutEventsRequest,
+  PutEventsRequestEntry,
+} from '@aws-sdk/client-eventbridge';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { customAlphabet } from 'nanoid';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
   EventDomain,
   EventDetailType,
@@ -16,10 +22,10 @@ import {
 export const BUCKET_NAME = 'BUCKET_NAME';
 export const EVENT_BUS_NAME = 'EVENT_BUS_NAME';
 
-const s3 = new S3();
+const s3Client = new S3Client({});
 const bucketName = process.env[BUCKET_NAME];
 
-const eventBridge = new EventBridge();
+const eventBridgeClient = new EventBridgeClient({});
 const eventBusName = process.env[EVENT_BUS_NAME];
 
 const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16);
@@ -45,19 +51,20 @@ export const handler = async (event: APIGatewayEvent): Promise<any> => {
     Key: `${loanApplicationReference}/loan-application.json`,
   };
 
-  await s3
-    .putObject({
+  await s3Client.send(
+    new PutObjectCommand({
       ...s3Params,
       ACL: 'bucket-owner-full-control',
       Body: event.body,
-    } as PutObjectRequest)
-    .promise();
+    })
+  );
 
   // https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html
+  // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html
 
-  const loanApplicationDetailsUrl = await s3.getSignedUrlPromise('getObject', {
-    ...s3Params,
-    Expires: 5 * 60, // 5 minutes
+  const signedCommand = new GetObjectCommand(s3Params);
+  const loanApplicationDetailsUrl = await getSignedUrl(s3Client, signedCommand, {
+    expiresIn: 5 * 60, // 5 minutes
   });
 
   // Publish the event to process the application
@@ -87,7 +94,7 @@ export const handler = async (event: APIGatewayEvent): Promise<any> => {
     Entries: [requestEntry],
   };
 
-  const response = await eventBridge.putEvents(request).promise();
+  const response = await eventBridgeClient.send(new PutEventsCommand(request));
   console.log(JSON.stringify({ response }, null, 2));
 
   // Return the reference

@@ -11,11 +11,14 @@ import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
+  EventBridgeClient,
   EventBus,
+  ListEventBusesCommand,
   ListEventBusesResponse,
   PutEventsRequestEntry,
+  TestEventPatternCommand,
   TestEventPatternRequest,
-} from 'aws-sdk/clients/eventbridge';
+} from '@aws-sdk/client-eventbridge';
 import { aws_events as cdkEvents } from 'aws-cdk-lib';
 import IntegrationTestStack from './IntegrationTestStack';
 import { CurrentTestItem, TestItemKey, TestItemPrefix } from './TestItems';
@@ -47,7 +50,9 @@ export default class IntegrationTestClient {
     region: IntegrationTestClient.getRegion(),
   });
 
-  static readonly eventBridge = new AWS.EventBridge({ region: IntegrationTestClient.getRegion() });
+  static readonly eventBridgeClient = new EventBridgeClient({
+    region: IntegrationTestClient.getRegion(),
+  });
 
   testResourceTagMappingList: ResourceTagMappingList;
 
@@ -160,12 +165,12 @@ export default class IntegrationTestClient {
 
     do {
       // eslint-disable-next-line no-await-in-loop
-      listEventBusesResponse = await IntegrationTestClient.eventBridge
-        .listEventBuses({
+      listEventBusesResponse = await IntegrationTestClient.eventBridgeClient.send(
+        new ListEventBusesCommand({
           NamePrefix: this.props.testStackId,
           NextToken: listEventBusesResponse?.NextToken,
         })
-        .promise();
+      );
 
       if (listEventBusesResponse?.EventBuses) {
         eventBuses = eventBuses.concat(listEventBusesResponse.EventBuses);
@@ -433,7 +438,7 @@ export default class IntegrationTestClient {
       EventPattern: JSON.stringify(mappedEventPattern),
     };
 
-    const response = await this.eventBridge.testEventPattern(request).promise();
+    const response = await this.eventBridgeClient.send(new TestEventPatternCommand(request));
 
     return response.Result ?? false;
   }

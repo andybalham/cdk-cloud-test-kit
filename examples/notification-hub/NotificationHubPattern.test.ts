@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
+import { PutEventsRequestEntry } from '@aws-sdk/client-eventbridge';
 import { expect } from 'chai';
 import { IntegrationTestClient } from '../../src';
 import { CaseEventType, CaseStatus } from './ExternalContracts';
