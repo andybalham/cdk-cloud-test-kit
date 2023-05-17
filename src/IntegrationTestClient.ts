@@ -5,8 +5,6 @@ import {
   ResourceTagMappingList,
 } from 'aws-sdk/clients/resourcegroupstaggingapi';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import dynamodb from 'aws-sdk/clients/dynamodb';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -20,6 +18,15 @@ import {
   TestEventPatternRequest,
 } from '@aws-sdk/client-eventbridge';
 import { aws_events as cdkEvents } from 'aws-cdk-lib';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  BatchWriteCommand,
+  DynamoDBDocumentClient,
+  PutCommand,
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import IntegrationTestStack from './IntegrationTestStack';
 import { CurrentTestItem, TestItemKey, TestItemPrefix } from './TestItems';
 import StepFunctionsTestClient from './StepFunctionsTestClient';
@@ -46,9 +53,11 @@ export default class IntegrationTestClient {
     region: IntegrationTestClient.getRegion(),
   });
 
-  static readonly db = new AWS.DynamoDB.DocumentClient({
-    region: IntegrationTestClient.getRegion(),
-  });
+  static readonly db = DynamoDBDocumentClient.from(
+    new DynamoDBClient({
+      region: IntegrationTestClient.getRegion(),
+    })
+  );
 
   static readonly eventBridgeClient = new EventBridgeClient({
     region: IntegrationTestClient.getRegion(),
@@ -190,7 +199,7 @@ export default class IntegrationTestClient {
 
       let testItemKeys = new Array<TestItemKey>();
 
-      let lastEvaluatedKey: dynamodb.Key | undefined;
+      let lastEvaluatedKey: Record<string, any> | undefined;
 
       do {
         const testQueryParams /*: QueryInput */ = {
@@ -204,7 +213,9 @@ export default class IntegrationTestClient {
         };
 
         // eslint-disable-next-line no-await-in-loop
-        const testQueryOutput = await IntegrationTestClient.db.query(testQueryParams).promise();
+        const testQueryOutput = await IntegrationTestClient.db.send(
+          new QueryCommand(testQueryParams)
+        );
 
         if (testQueryOutput.Items) {
           testItemKeys = testItemKeys.concat(testQueryOutput.Items.map((i) => i as TestItemKey));
@@ -219,9 +230,11 @@ export default class IntegrationTestClient {
           DeleteRequest: { Key: { PK: k.PK, SK: k.SK } },
         }));
 
-        await IntegrationTestClient.db
-          .batchWrite({ RequestItems: { [this.integrationTestTableName]: deleteRequests } })
-          .promise();
+        await IntegrationTestClient.db.send(
+          new BatchWriteCommand({
+            RequestItems: { [this.integrationTestTableName]: deleteRequests },
+          })
+        );
       }
 
       // Set the current test and inputs
@@ -234,12 +247,12 @@ export default class IntegrationTestClient {
         props,
       };
 
-      await IntegrationTestClient.db
-        .put({
+      await IntegrationTestClient.db.send(
+        new PutCommand({
           TableName: this.integrationTestTableName,
           Item: currentTestItem,
         })
-        .promise();
+      );
     }
   }
 
@@ -300,7 +313,7 @@ export default class IntegrationTestClient {
       return allObservations;
     }
 
-    let lastEvaluatedKey: dynamodb.Key | undefined;
+    let lastEvaluatedKey: Record<string, any> | undefined;
 
     do {
       const queryObservationsParams /*: QueryInput */ = {
@@ -315,9 +328,9 @@ export default class IntegrationTestClient {
       };
 
       // eslint-disable-next-line no-await-in-loop
-      const queryObservationsOutput = await IntegrationTestClient.db
-        .query(queryObservationsParams)
-        .promise();
+      const queryObservationsOutput = await IntegrationTestClient.db.send(
+        new QueryCommand(queryObservationsParams)
+      );
 
       if (!queryObservationsOutput.Items) {
         return allObservations;

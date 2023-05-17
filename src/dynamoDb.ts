@@ -6,13 +6,20 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   AttributeValue,
-  BatchWriteItemCommand,
   DescribeTableCommand,
   DynamoDBClient,
-  GetItemCommand,
   KeySchemaElement,
-  ScanCommand,
 } from '@aws-sdk/client-dynamodb';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  BatchWriteCommand,
+  ScanCommand,
+} from '@aws-sdk/lib-dynamodb';
+
+const newDocumentClient = (region: string): DynamoDBDocumentClient =>
+  DynamoDBDocumentClient.from(new DynamoDBClient({ region }));
 
 const itemToKey = (item: Record<string, AttributeValue>, keySchema: KeySchemaElement[]) => {
   let itemKey: Record<string, AttributeValue> = {};
@@ -33,7 +40,8 @@ export const clearAllItems = async (region: string, tableName: string) => {
   const keySchema = Table.KeySchema || [];
 
   // get the items to delete
-  const scanResult = await dynamoDBClient.send(
+  const documentClient = newDocumentClient(region);
+  const scanResult = await documentClient.send(
     new ScanCommand({
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       AttributesToGet: keySchema.map((key) => key.AttributeName!),
@@ -47,8 +55,8 @@ export const clearAllItems = async (region: string, tableName: string) => {
       DeleteRequest: { Key: itemToKey(item, keySchema) },
     }));
 
-    await dynamoDBClient.send(
-      new BatchWriteItemCommand({ RequestItems: { [tableName]: deleteRequests } })
+    await documentClient.send(
+      new BatchWriteCommand({ RequestItems: { [tableName]: deleteRequests } })
     );
   }
 };
@@ -58,13 +66,13 @@ export const writeItems = async (
   tableName: string,
   items: Record<string, AttributeValue>[]
 ) => {
-  const dynamoDBClient = new DynamoDBClient({ region });
+  const documentClient = newDocumentClient(region);
   const writeRequests = items.map((item) => ({
     PutRequest: { Item: item },
   }));
 
-  await dynamoDBClient.send(
-    new BatchWriteItemCommand({ RequestItems: { [tableName]: writeRequests } })
+  await documentClient.send(
+    new BatchWriteCommand({ RequestItems: { [tableName]: writeRequests } })
   );
 };
 
@@ -73,8 +81,8 @@ export const getItem = async (
   tableName: string,
   key: Record<string, AttributeValue>
 ) => {
-  const dynamoDBClient = new DynamoDBClient({ region });
-  const dbItem = await dynamoDBClient.send(new GetItemCommand({ TableName: tableName, Key: key }));
+  const documentClient = newDocumentClient(region);
+  const dbItem = await documentClient.send(new GetCommand({ TableName: tableName, Key: key }));
   // Item is undefined if key not found
   return dbItem.Item;
 };
