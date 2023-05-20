@@ -32,8 +32,7 @@ export default class RequestApiTestStack extends IntegrationTestStack {
 
     this.addTestFunction(
       new NodejsFunction(this, RequestApiTestStack.EventObserverId, {
-        // TODO 07May23: Upgrade
-        runtime: Runtime.NODEJS_14_X,
+        runtime: Runtime.NODEJS_18_X,
         logRetention: RetentionDays.ONE_DAY,
       })
     );

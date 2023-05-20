@@ -1,11 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  PaginationToken as ResourcePaginationToken,
+  GetResourcesCommand,
+  ResourceGroupsTaggingAPIClient,
   ResourceTagMapping,
-  ResourceTagMappingList,
-} from 'aws-sdk/clients/resourcegroupstaggingapi';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import AWS from 'aws-sdk';
+} from '@aws-sdk/client-resource-groups-tagging-api';
 import dotenv from 'dotenv';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
@@ -49,7 +47,7 @@ export interface IntegrationTestClientProps {
 
 export default class IntegrationTestClient {
   //
-  static readonly tagging = new AWS.ResourceGroupsTaggingAPI({
+  static readonly tagging = new ResourceGroupsTaggingAPIClient({
     region: IntegrationTestClient.getRegion(),
   });
 
@@ -63,7 +61,7 @@ export default class IntegrationTestClient {
     region: IntegrationTestClient.getRegion(),
   });
 
-  testResourceTagMappingList: ResourceTagMappingList;
+  testResourceTagMappingList: ResourceTagMapping[];
 
   testStackEventBuses = new Array<EventBus>();
 
@@ -101,24 +99,23 @@ export default class IntegrationTestClient {
     await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
   }
 
-  static async getResourcesByTagKeyAsync(key: string): Promise<ResourceTagMappingList> {
+  static async getResourcesByTagKeyAsync(key: string): Promise<ResourceTagMapping[]> {
     //
     let resourceTagMappings: ResourceTagMapping[] = [];
 
-    let paginationToken: ResourcePaginationToken | undefined;
+    let paginationToken: string | undefined;
 
     do {
       // eslint-disable-next-line no-await-in-loop
       const resourcesOutput = await IntegrationTestClient.tagging
-        .getResources({
+        .send(new GetResourcesCommand({
           TagFilters: [
             {
               Key: key,
             },
           ],
           PaginationToken: paginationToken,
-        })
-        .promise();
+        }));
 
       resourceTagMappings = resourceTagMappings.concat(
         resourcesOutput.ResourceTagMappingList ?? []

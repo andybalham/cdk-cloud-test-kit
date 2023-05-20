@@ -19,8 +19,7 @@ export default class RequestApi extends Construct {
     super(scope, id);
 
     const eventPublisherFunction = new NodejsFunction(this, 'EventPublisher', {
-      // TODO 07May23: Upgrade
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       environment: {
         [BUCKET_NAME]: props.bucket.bucketName,
         [EVENT_BUS_NAME]: props.eventBus.eventBusName,
