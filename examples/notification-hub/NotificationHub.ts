@@ -23,6 +23,7 @@ export default class NotificationHub extends Construct {
       this,
       'PublishCaseEventFunction',
       {
+        runtime: lambda.Runtime.NODEJS_18_X,
         environment: {
           EVENT_BUS_NAME: this.eventBus.eventBusName,
         },

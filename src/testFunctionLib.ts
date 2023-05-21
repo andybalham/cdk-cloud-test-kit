@@ -1,6 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { nanoid } from 'nanoid';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import {
   CurrentTestItem,
   FunctionStateTestItem,
@@ -12,7 +12,9 @@ import { TestProps } from './TestProps';
 
 const integrationTestTableName = process.env.INTEGRATION_TEST_TABLE_NAME;
 
-export const getTestPropsAsync = async (documentClient: DocumentClient): Promise<TestProps> => {
+export const getTestPropsAsync = async (
+  documentClient: DynamoDBDocumentClient
+): Promise<TestProps> => {
   //
   if (integrationTestTableName === undefined)
     throw new Error('integrationTestTableName === undefined');
@@ -26,7 +28,7 @@ export const getTestPropsAsync = async (documentClient: DocumentClient): Promise
     },
   };
 
-  const testQueryOutput = await documentClient.query(testQueryParams).promise();
+  const testQueryOutput = await documentClient.send(new QueryCommand(testQueryParams));
 
   if (testQueryOutput.Items?.length !== 1)
     throw new Error(
@@ -39,7 +41,7 @@ export const getTestPropsAsync = async (documentClient: DocumentClient): Promise
 };
 
 export const recordObservationAsync = async (
-  documentClient: DocumentClient,
+  documentClient: DynamoDBDocumentClient,
   observation: TestObservation
 ): Promise<void> => {
   //
@@ -56,16 +58,16 @@ export const recordObservationAsync = async (
     observation,
   };
 
-  await documentClient
-    .put({
+  await documentClient.send(
+    new PutCommand({
       TableName: integrationTestTableName,
       Item: testOutputItem,
     })
-    .promise();
+  );
 };
 
 export const recordObservationDataAsync = async (
-  documentClient: DocumentClient,
+  documentClient: DynamoDBDocumentClient,
   data: Record<string, any>
 ): Promise<void> => {
   //
@@ -81,7 +83,7 @@ export const recordObservationDataAsync = async (
 };
 
 export const setFunctionStateAsync = async (
-  documentClient: DocumentClient,
+  documentClient: DynamoDBDocumentClient,
   functionId: string,
   state: Record<string, any>
 ): Promise<void> => {
@@ -97,16 +99,16 @@ export const setFunctionStateAsync = async (
     state,
   };
 
-  await documentClient
-    .put({
+  await documentClient.send(
+    new PutCommand({
       TableName: integrationTestTableName,
       Item: functionStateItem,
     })
-    .promise();
+  );
 };
 
 export const getFunctionStateAsync = async (
-  documentClient: DocumentClient,
+  documentClient: DynamoDBDocumentClient,
   functionId: string,
   initialState: Record<string, any>
 ): Promise<Record<string, any>> => {
@@ -126,7 +128,9 @@ export const getFunctionStateAsync = async (
     },
   };
 
-  const functionStateQueryOutput = await documentClient.query(functionStateQueryParams).promise();
+  const functionStateQueryOutput = await documentClient.send(
+    new QueryCommand(functionStateQueryParams)
+  );
 
   if (functionStateQueryOutput.Items === undefined || functionStateQueryOutput.Items.length === 0) {
     return initialState;

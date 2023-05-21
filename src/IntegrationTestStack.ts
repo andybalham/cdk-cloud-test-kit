@@ -167,7 +167,7 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
     const entry = fs.existsSync(typescriptEntry) ? typescriptEntry : packageEntry;
 
     const testFunction = new lambdaNodejs.NodejsFunction(this, `TestFunction-${functionId}`, {
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       entry,
       handler: 'handler',
       environment: {

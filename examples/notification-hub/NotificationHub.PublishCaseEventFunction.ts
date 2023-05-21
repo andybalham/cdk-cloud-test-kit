@@ -2,15 +2,16 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
-import AWS from 'aws-sdk';
 import {
+  EventBridgeClient,
+  PutEventsCommand,
   PutEventsRequest,
   PutEventsRequestEntry,
   PutEventsResponse,
-} from 'aws-sdk/clients/eventbridge';
+} from '@aws-sdk/client-eventbridge';
 import { CaseEvent } from './ExternalContracts';
 
-const eventBridge = new AWS.EventBridge();
+const eventBridgeClient = new EventBridgeClient({});
 
 export const handler = async (caseEvent: CaseEvent): Promise<PutEventsResponse> => {
   console.log(JSON.stringify({ caseEvent }, null, 2));
@@ -26,7 +27,7 @@ export const handler = async (caseEvent: CaseEvent): Promise<PutEventsResponse> 
     Entries: [requestEntry],
   };
 
-  const response = await eventBridge.putEvents(request).promise();
+  const response = await eventBridgeClient.send(new PutEventsCommand(request));
   console.log(JSON.stringify({ response }, null, 2));
   return response;
 };

@@ -1,13 +1,18 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import AWS from 'aws-sdk';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AttributeValue, DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { AttributeValue as StreamAttributeValue } from 'aws-lambda/trigger/dynamodb-stream';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { clearAllItems, getItem } from './dynamoDb';
 
 export default class DynamoDBTestClient {
   //
-  readonly db: AWS.DynamoDB.DocumentClient;
+  readonly db: DynamoDBDocumentClient;
 
   constructor(public readonly region: string, public readonly tableName: string) {
-    this.db = new AWS.DynamoDB.DocumentClient({ region });
+    this.db = DynamoDBDocumentClient.from(new DynamoDBClient({ region }));
   }
 
   async clearAllItemsAsync(): Promise<void> {
@@ -24,14 +29,15 @@ export default class DynamoDBTestClient {
   }
 
   async getItemByEventKeyAsync<T>(
-    eventKey: { [key: string]: AWS.DynamoDB.AttributeValue } | undefined
+    eventKey: { [key: string]: StreamAttributeValue } | undefined
   ): Promise<T | undefined> {
     //
     if (eventKey === undefined) {
       return undefined;
     }
 
-    const key = AWS.DynamoDB.Converter.unmarshall(eventKey);
+    // Override: Type 'AWSLambda.AttributeValue' is not assignable to type 'DynamoDB.AttributeValue'
+    const key = unmarshall(eventKey as Record<string, AttributeValue>);
 
     return getItem(this.region, this.tableName, key) as unknown as T;
   }

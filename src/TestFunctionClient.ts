@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 // import { nanoid } from 'nanoid';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   getFunctionStateAsync,
   getTestPropsAsync,
@@ -20,7 +22,7 @@ import { TestProps } from './TestProps';
 
 // const integrationTestTableName = process.env.INTEGRATION_TEST_TABLE_NAME;
 
-const documentClient = new DocumentClient();
+const documentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export default class TestFunctionClient {
   //

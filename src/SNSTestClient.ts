@@ -1,27 +1,30 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import AWS from 'aws-sdk';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import sns from 'aws-sdk/clients/sns';
+import {
+  MessageAttributeValue,
+  PublishCommand,
+  PublishInput,
+  SNSClient,
+} from '@aws-sdk/client-sns';
 
 export default class SNSTestClient {
   //
-  readonly sns: AWS.SNS;
+  readonly sns: SNSClient;
 
   constructor(public readonly region: string, public readonly topicArn: string) {
-    this.sns = new AWS.SNS({ region });
+    this.sns = new SNSClient({ region });
   }
 
   async publishEventAsync(
     message: Record<string, any>,
-    messageAttributes?: sns.MessageAttributeMap
+    messageAttributes?: Record<string, MessageAttributeValue>
   ): Promise<void> {
     //
-    const publishInput: sns.PublishInput = {
+    const publishInput: PublishInput = {
       Message: JSON.stringify(message),
       TopicArn: this.topicArn,
       MessageAttributes: messageAttributes,
     };
 
-    await this.sns.publish(publishInput).promise();
+    await this.sns.send(new PublishCommand(publishInput));
   }
 }

@@ -65,6 +65,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               definitionScope,
               'BuildLoanItemFunction',
               {
+                runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
               }
             ),
@@ -89,6 +90,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               definitionScope,
               'BuildDeclinedEventFunction',
               {
+                runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
               }
             ),
@@ -113,6 +115,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               definitionScope,
               'ExtractErrorCauseFunction',
               {
+                runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
               }
             ),

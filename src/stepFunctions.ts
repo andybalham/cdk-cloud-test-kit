@@ -1,19 +1,24 @@
-// Copied from https://github.com/erezrokah/aws-testing-library
+// Original copied from https://github.com/erezrokah/aws-testing-library
 
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import AWS = require('aws-sdk');
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { HistoryEvent } from 'aws-sdk/clients/stepfunctions';
+import {
+  SFNClient,
+  ListExecutionsCommand,
+  HistoryEvent,
+  GetExecutionHistoryCommand,
+  StopExecutionCommand,
+} from '@aws-sdk/client-sfn';
 
 const getExecutions = async (region: string, stateMachineArn: string, statusFilter?: string) => {
-  const stepFunctions = new AWS.StepFunctions({ region });
+  const sfnClient = new SFNClient({ region });
   const opts = {
     maxResults: 1,
     stateMachineArn,
     ...(statusFilter && { statusFilter }),
   };
-  const result = await stepFunctions.listExecutions(opts).promise();
+  const result = await sfnClient.send(new ListExecutionsCommand(opts));
 
   const { executions } = result;
 
@@ -22,7 +27,7 @@ const getExecutions = async (region: string, stateMachineArn: string, statusFilt
 
 const RUNNING = 'RUNNING';
 
-export const getEventName = (event: AWS.StepFunctions.HistoryEvent) => {
+export const getEventName = (event: HistoryEvent) => {
   const defaultDetails = {
     name: undefined,
   };
@@ -33,15 +38,15 @@ export const getEventName = (event: AWS.StepFunctions.HistoryEvent) => {
 
 export const getCurrentState = async (region: string, stateMachineArn: string) => {
   const executions = await getExecutions(region, stateMachineArn, RUNNING);
-  if (executions.length > 0) {
+  if (executions && executions.length > 0) {
     const newestRunning = executions[0]; // the first is the newest one
 
-    const stepFunctions = new AWS.StepFunctions({ region });
+    const sfnClient = new SFNClient({ region });
     const { executionArn } = newestRunning;
-    const { events } = await stepFunctions
-      .getExecutionHistory({ executionArn, reverseOrder: true, maxResults: 1 })
-      .promise();
-    if (events.length > 0) {
+    const { events } = await sfnClient.send(
+      new GetExecutionHistoryCommand({ executionArn, reverseOrder: true, maxResults: 1 })
+    );
+    if (events && events.length > 0) {
       const newestEvent = events[0];
       const name = getEventName(newestEvent);
       return name;
@@ -53,26 +58,26 @@ export const getCurrentState = async (region: string, stateMachineArn: string) =
 
 export const getStates = async (region: string, stateMachineArn: string) => {
   const executions = await getExecutions(region, stateMachineArn);
-  if (executions.length > 0) {
+  if (executions && executions.length > 0) {
     const newestRunning = executions[0]; // the first is the newest one
 
-    const stepFunctions = new AWS.StepFunctions({ region });
+    const sfnClient = new SFNClient({ region });
     const { executionArn } = newestRunning;
-    const { events } = await stepFunctions
-      .getExecutionHistory({ executionArn, reverseOrder: true })
-      .promise();
-    const names = events.map((event) => getEventName(event)).filter((name) => !!name);
+    const { events } = await sfnClient.send(
+      new GetExecutionHistoryCommand({ executionArn, reverseOrder: true })
+    );
+    const names = (events ?? []).map((event) => getEventName(event)).filter((name) => !!name);
     return names;
   }
   return [];
 };
 
 export const stopRunningExecutions = async (region: string, stateMachineArn: string) => {
-  const stepFunctions = new AWS.StepFunctions({ region });
-  const executions = await getExecutions(region, stateMachineArn, RUNNING);
+  const sfnClient = new SFNClient({ region });
+  const executions = (await getExecutions(region, stateMachineArn, RUNNING)) ?? [];
 
   await Promise.all(
-    executions.map(({ executionArn }) => stepFunctions.stopExecution({ executionArn }).promise())
+    executions.map(({ executionArn }) => sfnClient.send(new StopExecutionCommand({ executionArn })))
   );
 };
 
@@ -82,19 +87,19 @@ export const getLastEventAsync = async (
   executionArn: string
 ): Promise<HistoryEvent | undefined> => {
   //
-  const executions = (await getExecutions(region, stateMachineArn)).filter(
+  const executions = ((await getExecutions(region, stateMachineArn)) ?? []).filter(
     (e) => e.executionArn === executionArn
   );
 
   if (executions.length > 0) {
     //
-    const stepFunctions = new AWS.StepFunctions({ region });
+    const sfnClient = new SFNClient({ region });
 
-    const { events } = await stepFunctions
-      .getExecutionHistory({ executionArn, reverseOrder: true, maxResults: 1 })
-      .promise();
+    const { events } = await sfnClient.send(
+      new GetExecutionHistoryCommand({ executionArn, reverseOrder: true, maxResults: 1 })
+    );
 
-    if (events.length > 0) {
+    if (events && events.length > 0) {
       return events[0];
     }
 

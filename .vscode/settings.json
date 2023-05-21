@@ -17,6 +17,7 @@
     "nanoid",
     "nolookalikes",
     "Plodville",
+    "presigner",
     "resourcegroupstaggingapi",
     "stepfunctions",
     "TRes",
@@ -31,11 +32,11 @@
     },
     "[Default Light+]": {
       "titleBar.activeBackground": "#7d4ffc",
-      "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#5f29f5",
       "activityBar.activeBackground": "#7d4ffc",
       "sideBar.background": "#dad1f1",
-      "terminal.background": "#e1ddeb"
+      "panel.background": "#dad1f1",
+      "terminal.background": "#ebe8f3"
     }
   },
   "serverlessConsole.services": [
@@ -48,6 +49,19 @@
         {
           "region": "eu-west-2",
           "stackName": "RequestApiTestStack",
+          "stage": "dev"
+        }
+      ]
+    },
+    {
+      "type": "cloudformation",
+      "title": "Notification Hub Test Stack",
+      "timeOffsetInMs": 0,
+      "awsProfile": "default",
+      "stacks": [
+        {
+          "region": "eu-west-2",
+          "stackName": "NotificationHubTestStack",
           "stage": "dev"
         }
       ]

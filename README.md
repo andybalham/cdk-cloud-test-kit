@@ -1,6 +1,6 @@
-![CDK Cloud Test Kit logo](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/images/cdk-cloud-test-kit-logo.png?raw=true)
-
 # CDK Cloud Test Kit
+
+![CDK Cloud Test Kit logo](https://github.com/andybalham/cdk-cloud-test-kit/blob/main/images/cdk-cloud-test-kit-logo.png?raw=true)
 
 The CDK Cloud Test Kit is a set of [TypeScript](https://www.typescriptlang.org/) classes, with the aim of making it straightforward to test [CDK constructs](https://docs.aws.amazon.com/cdk/v2/guide/constructs.html) in the cloud.
 
@@ -14,11 +14,11 @@ The approach is based on two key classes:
 `IntegrationTestStack` is an abstract class, derived from the CDK [Stack](https://docs.aws.amazon.com/cdk/latest/guide/stacks.html) class, that provides the following functionality:
 
 - Easy deployment of common test resource scaffolding, such as observer Lambda functions and a DynamoDB table for recording observations.
-- A method to tag the deployed resources, so that they can be discovered, invoked, nd read without needing to know the resource names or ARNs.
+- A method to tag the deployed resources, so that they can be discovered, invoked, and read without needing to know the resource names or ARNs.
 
 `IntegrationTestClient` is a class that works in conjunction with the `IntegrationTestStack` that provides the following functionality:
 
-- A set of methods to locate and interact with the deployed test resources using the [AWS SDK](https://aws.amazon.com/sdk-for-javascript/). For example, to upload an object to an S3 bucket or publish an event to an SNS topic.
+- A set of methods to locate and interact with the deployed test resources using the [AWS SDK](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/welcome.html). For example, to upload an object to an S3 bucket or publish an event to an SNS topic.
 - A method to poll for test observations, making writing asynchronous unit tests simple and clear.
 
 The best way to see what the `cdk-cloud-test-kit` can do for you is to look at the examples or, better still, run them.

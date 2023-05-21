@@ -3,6 +3,7 @@ import { EventBus } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { BUCKET_NAME, EVENT_BUS_NAME } from './RequestApi.EventPublisher';
 
 export interface RequestApiProps {
@@ -18,6 +19,7 @@ export default class RequestApi extends Construct {
     super(scope, id);
 
     const eventPublisherFunction = new NodejsFunction(this, 'EventPublisher', {
+      runtime: Runtime.NODEJS_18_X,
       environment: {
         [BUCKET_NAME]: props.bucket.bucketName,
         [EVENT_BUS_NAME]: props.eventBus.eventBusName,
