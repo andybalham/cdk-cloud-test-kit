@@ -3,10 +3,10 @@ import { InvocationType, InvokeCommand, LambdaClient } from '@aws-sdk/client-lam
 
 export default class LambdaTestClient {
   //
-  readonly lambda: LambdaClient;
+  readonly lambdaClient: LambdaClient;
 
   constructor(public readonly region: string, public readonly functionName: string) {
-    this.lambda = new LambdaClient({ region });
+    this.lambdaClient = new LambdaClient({ region });
   }
 
   async invokeAsync<TReq, TRes>(request?: TReq): Promise<TRes | undefined> {
@@ -19,10 +19,11 @@ export default class LambdaTestClient {
       ...lambdaPayload,
     };
 
-    const { Payload } = await this.lambda.send(new InvokeCommand(params));
+    const { Payload } = await this.lambdaClient.send(new InvokeCommand(params));
 
     if (Payload) {
-      return JSON.parse(Payload.toString());
+      const decoder = new TextDecoder();
+      return JSON.parse(decoder.decode(Payload));
     }
 
     return undefined;
@@ -39,6 +40,6 @@ export default class LambdaTestClient {
       ...lambdaPayload,
     };
 
-    await this.lambda.send(new InvokeCommand(params));
+    await this.lambdaClient.send(new InvokeCommand(params));
   }
 }

@@ -52,6 +52,19 @@
           "stage": "dev"
         }
       ]
+    },
+    {
+      "type": "cloudformation",
+      "title": "Notification Hub Test Stack",
+      "timeOffsetInMs": 0,
+      "awsProfile": "default",
+      "stacks": [
+        {
+          "region": "eu-west-2",
+          "stackName": "NotificationHubTestStack",
+          "stage": "dev"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@andybalham/cdk-cloud-test-kit",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "description": "A toolkit for cloud-based testing of CDK applications",
   "main": "index.js",
   "types": "index.d.ts",
@@ -90,6 +90,18 @@
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.x",
+    "@aws-sdk/client-cloudwatch-logs": "^3.x",
+    "@aws-sdk/client-dynamodb": "^3.x",
+    "@aws-sdk/client-eventbridge": "^3.x",
+    "@aws-sdk/client-lambda": "^3.x",
+    "@aws-sdk/client-resource-groups-tagging-api": "^3.x",
+    "@aws-sdk/client-s3": "^3.x",
+    "@aws-sdk/client-sfn": "^3.x",
+    "@aws-sdk/client-sns": "^3.x",
+    "@aws-sdk/client-sqs": "^3.x",
+    "@aws-sdk/lib-dynamodb": "^3.x",
+    "@aws-sdk/s3-request-presigner": "^3.x",
+    "@aws-sdk/util-dynamodb": "^3.x",
     "constructs": "^10.x",
     "esbuild": "0.x"
   },
