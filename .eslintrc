@@ -11,14 +11,10 @@
     "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
-  "settings": {
-    "react": {
-      "version": "latest"
-    }
-  },
+  "settings": {},
   "rules": {
     "prettier/prettier": ["off"],
-    "indent": ["warn", 2, {"SwitchCase": 1}],
+    "indent": ["warn", 2, { "SwitchCase": 1 }],
     "semi": ["error", "always"],
     "@typescript-eslint/interface-name-prefix": ["off"],
     "@typescript-eslint/no-explicit-any": ["off"],
