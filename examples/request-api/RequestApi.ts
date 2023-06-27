@@ -1,9 +1,9 @@
-import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { Deployment, LambdaIntegration, RestApi, Stage } from 'aws-cdk-lib/aws-apigateway';
 import { EventBus } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { BUCKET_NAME, EVENT_BUS_NAME } from './RequestApi.EventPublisher';
 
 export interface RequestApiProps {
@@ -24,14 +24,37 @@ export default class RequestApi extends Construct {
         [BUCKET_NAME]: props.bucket.bucketName,
         [EVENT_BUS_NAME]: props.eventBus.eventBusName,
       },
+      tracing: Tracing.ACTIVE,
     });
 
     props.bucket.grantReadWrite(eventPublisherFunction);
     props.eventBus.grantPutEventsTo(eventPublisherFunction);
 
-    this.api = new RestApi(this, 'RequestApi');
+    this.api = new RestApi(this, 'RequestApi', {});
 
     const requests = this.api.root.addResource('requests');
     requests.addMethod('POST', new LambdaIntegration(eventPublisherFunction));
+
+    const deployment = new Deployment(this, 'Deployment', { api: this.api });
+
+    // const devLogGroup = new logs.LogGroup(this, 'DevLogs');
+
+    // eslint-disable-next-line no-new
+    new Stage(this, 'Dev', {
+      deployment,
+      tracingEnabled: true,
+      // accessLogDestination: new LogGroupLogDestination(devLogGroup),
+      // accessLogFormat: AccessLogFormat.jsonWithStandardFields({
+      //   caller: false,
+      //   httpMethod: true,
+      //   ip: true,
+      //   protocol: true,
+      //   requestTime: true,
+      //   resourcePath: true,
+      //   responseLength: true,
+      //   status: true,
+      //   user: true,
+      // }),
+    });
   }
 }
