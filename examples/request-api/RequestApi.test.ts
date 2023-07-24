@@ -27,7 +27,7 @@ describe('RequestApi Tests', () => {
   it(`publishes event as expected`, async () => {
     // Arrange
 
-    const requestApiUrl = `${requestApiBaseUrl}/prod/requests`;
+    const requestApiUrl = `${requestApiBaseUrl}/dev/requests`;
 
     const loanApplicationDetails: LoanApplicationDetails = {
       personalDetails: {
@@ -47,7 +47,13 @@ describe('RequestApi Tests', () => {
 
     // Act
 
-    const response = await axios.post(requestApiUrl, loanApplicationDetails);
+    const API_KEY = process.env.REQUEST_API_KEY ?? '<undefined>';
+
+    const response = await axios.post(requestApiUrl, loanApplicationDetails, {
+      headers: {
+        'x-api-key': API_KEY,
+      },
+    });
 
     expect(response.status).to.equal(201);
 
