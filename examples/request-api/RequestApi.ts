@@ -1,10 +1,12 @@
 import {
   AccessLogFormat,
+  ApiKey,
   ApiKeySourceType,
   LambdaIntegration,
   LogGroupLogDestination,
   MethodLoggingLevel,
   RestApi,
+  UsagePlan,
 } from 'aws-cdk-lib/aws-apigateway';
 import { EventBus } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -45,7 +47,7 @@ export default class RequestApi extends Construct {
     });
 
     this.api = new RestApi(this, 'RequestApi', {
-      // apiKeySourceType: ApiKeySourceType.HEADER,
+      apiKeySourceType: ApiKeySourceType.HEADER,
       deployOptions: {
         tracingEnabled: true,
         stageName: 'dev',
@@ -66,6 +68,22 @@ export default class RequestApi extends Construct {
     });
 
     const requests = this.api.root.addResource('requests');
-    requests.addMethod('POST', new LambdaIntegration(eventPublisherFunction));
+    requests.addMethod('POST', new LambdaIntegration(eventPublisherFunction), {
+      apiKeyRequired: true
+    });
+
+    const apiKey = new ApiKey(this, 'ApiKey');
+
+    const usagePlan = new UsagePlan(this, 'UsagePlan', {
+      name: 'Cloud Test Kit - Request API Usage Plan',
+      apiStages: [
+        {
+          api: this.api,
+          stage: this.api.deploymentStage,
+        },
+      ],
+    });
+
+    usagePlan.addApiKey(apiKey);
   }
 }
