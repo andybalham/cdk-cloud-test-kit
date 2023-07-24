@@ -12,6 +12,7 @@ import {
 import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { customAlphabet } from 'nanoid';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import * as AWSXRay from 'aws-xray-sdk';
 import {
   EventDomain,
   EventDetailType,
@@ -25,7 +26,7 @@ export const EVENT_BUS_NAME = 'EVENT_BUS_NAME';
 const s3Client = new S3Client({});
 const bucketName = process.env[BUCKET_NAME];
 
-const eventBridgeClient = new EventBridgeClient({});
+const eventBridgeClient = AWSXRay.captureAWSv3Client(new EventBridgeClient({}));
 const eventBusName = process.env[EVENT_BUS_NAME];
 
 const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16);

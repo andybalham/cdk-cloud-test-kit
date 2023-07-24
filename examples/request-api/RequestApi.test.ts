@@ -27,7 +27,7 @@ describe('RequestApi Tests', () => {
   it(`publishes event as expected`, async () => {
     // Arrange
 
-    const requestApiUrl = `${requestApiBaseUrl}/prod/requests`;
+    const requestApiUrl = `${requestApiBaseUrl}/dev/requests`;
 
     const loanApplicationDetails: LoanApplicationDetails = {
       personalDetails: {
