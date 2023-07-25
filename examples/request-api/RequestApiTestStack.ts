@@ -11,7 +11,7 @@ import RequestApi from './RequestApi';
 
 export default class RequestApiTestStack extends IntegrationTestStack {
   //
-  static readonly Id = 'RequestApiTestStack';
+  static readonly Id = 'CTKRequestApiTestStack';
 
   static readonly RequestApiId = 'RequestApi';
 

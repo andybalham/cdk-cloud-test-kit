@@ -9,7 +9,7 @@ import { LoanTableSchema } from './ExternalContracts';
 
 export default class LoanProcessorTestStack extends IntegrationTestStack {
   //
-  static readonly Id = `LoanProcessorTestStack`;
+  static readonly Id = `CTKLoanProcessorTestStack`;
 
   static readonly CreditRatingFunctionId = 'CreditRatingFunction';
 

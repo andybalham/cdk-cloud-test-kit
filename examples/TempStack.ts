@@ -4,7 +4,7 @@ import { IntegrationTestStack } from '../src';
 
 export default class TempTestStack extends IntegrationTestStack {
   //
-  static readonly Id = `TempTestStack`;
+  static readonly Id = `CTKTempTestStack`;
 
   static readonly TestBucketId = 'TestBucket';
 

@@ -5,7 +5,7 @@ import SimpleEventRouterConstruct from './SimpleEventRouterConstruct';
 
 export default class SimpleEventRouterTestStack extends IntegrationTestStack {
   //
-  static readonly Id = `SimpleEventRouterTestStack`;
+  static readonly Id = `CTKSimpleEventRouterTestStack`;
 
   static readonly TestInputTopicId = 'TestInputTopic';
 
