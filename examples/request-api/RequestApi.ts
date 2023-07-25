@@ -48,6 +48,7 @@ export default class RequestApi extends Construct {
 
     this.api = new RestApi(this, 'RequestApi', {
       apiKeySourceType: ApiKeySourceType.HEADER,
+      restApiName: 'Cloud Test Kit - Request API',
       deployOptions: {
         tracingEnabled: true,
         stageName: 'dev',

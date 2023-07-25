@@ -175,8 +175,7 @@ export default abstract class IntegrationTestStack extends cdk.Stack {
         INTEGRATION_TEST_TABLE_NAME: this.integrationTestTable.tableName,
       },
       logRetention: RetentionDays.ONE_DAY,
-      // TODO 28Jun23: Is PASS_THROUGH correct for the test functions
-      tracing: lambda.Tracing.PASS_THROUGH,
+      tracing: lambda.Tracing.ACTIVE,
     });
 
     this.addTestResourceTag(testFunction, functionId);

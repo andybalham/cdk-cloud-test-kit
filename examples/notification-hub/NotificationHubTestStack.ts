@@ -6,7 +6,7 @@ import { CaseEventType } from './ExternalContracts';
 
 export default class NotificationHubTestStack extends IntegrationTestStack {
   //
-  static readonly Id = `NotificationHubTestStack`;
+  static readonly Id = `CTKNotificationHubTestStack`;
 
   static readonly BusObserverFunctionId = 'BusObserverFunction';
 

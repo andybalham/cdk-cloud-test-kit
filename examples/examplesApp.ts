@@ -8,7 +8,7 @@ import SimpleMessageRouterTestStack from './simple-message-router/SimpleMessageR
 import TempTestStack from './TempStack';
 
 const app = new cdk.App();
-cdk.Tags.of(app).add('app', 'ExamplesApp');
+cdk.Tags.of(app).add('app', 'Cloud Test Kit Examples App');
 
 new TempTestStack(app, TempTestStack.Id);
 new SimpleEventRouterTestStack(app, SimpleEventRouterTestStack.Id);
