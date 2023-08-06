@@ -77,4 +77,42 @@ describe('RequestApi Tests', () => {
 
     expect(actualLoanApplicationDetails).to.deep.equal(loanApplicationDetails);
   });
+
+  it.skip(`sends 16 requests as expected`, async () => {
+    // Arrange
+
+    const requestApiUrl = `${requestApiBaseUrl}/dev/requests`;
+
+    const loanApplicationDetails: LoanApplicationDetails = {
+      personalDetails: {
+        firstName: 'Alex',
+        lastName: 'Pritchard',
+        niNumber: 'AB123456C',
+        address: {
+          lines: ['999 Letsby Avenue', 'Plodville'],
+          postcode: 'AB1 2CD',
+        },
+      },
+      loanDetails: {
+        amount: 10000,
+        termMonths: 24,
+      },
+    };
+
+    // Act
+
+    const API_KEY = process.env.REQUEST_API_KEY ?? '<undefined>';
+
+    // eslint-disable-next-line no-plusplus
+    for (let index = 0; index < 16; index++) {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await axios.post(requestApiUrl, loanApplicationDetails, {
+        headers: {
+          'x-api-key': API_KEY,
+        },
+      });
+
+      expect(response.status).to.equal(201);
+    }
+  });
 });

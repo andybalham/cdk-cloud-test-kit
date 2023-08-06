@@ -25,7 +25,8 @@
     "loan-processor-deploy": "cdk deploy CTKLoanProcessorTestStack --hotswap",
     "loan-processor-destroy": "cdk destroy CTKLoanProcessorTestStack",
     "request-api-synth": "cdk synth CTKRequestApiTestStack > .cdk-synth.yml",
-    "request-api-deploy": "cdk deploy CTKRequestApiTestStack --hotswap",
+    "request-api-hotswap": "cdk deploy CTKRequestApiTestStack --hotswap",
+    "request-api-deploy": "cdk deploy CTKRequestApiTestStack",
     "request-api-destroy": "cdk destroy CTKRequestApiTestStack"
   },
   "repository": {
