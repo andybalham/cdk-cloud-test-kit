@@ -35,7 +35,7 @@ export default class RequestApi extends Construct {
         [BUCKET_NAME]: props.bucket.bucketName,
         [EVENT_BUS_NAME]: props.eventBus.eventBusName,
       },
-      tracing: Tracing.ACTIVE,
+      tracing: Tracing.PASS_THROUGH,
     });
 
     props.bucket.grantReadWrite(eventPublisherFunction);

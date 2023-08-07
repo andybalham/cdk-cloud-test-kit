@@ -32,6 +32,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
   constructor(scope: Construct, id: string, props: LoanProcessorStateMachineProps) {
     super(scope, id, {
       ...props,
+      tracingEnabled: true,
       getDefinition: (definitionScope: Construct): sfn.IChainable =>
         StateMachineBuilder.new()
 
@@ -67,6 +68,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               {
                 runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
+                tracing: lambda.Tracing.ACTIVE,
               }
             ),
             inputPath: '$.loanDetails',
@@ -92,6 +94,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               {
                 runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
+                tracing: lambda.Tracing.ACTIVE,
               }
             ),
             inputPath: '$.loanDetails',
@@ -117,6 +120,7 @@ export default class LoanProcessorStateMachine extends StateMachineWithGraph {
               {
                 runtime: lambda.Runtime.NODEJS_18_X,
                 logRetention: RetentionDays.ONE_DAY,
+                tracing: lambda.Tracing.ACTIVE,
               }
             ),
             resultPath: '$.Cause',

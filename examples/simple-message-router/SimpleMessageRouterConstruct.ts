@@ -28,7 +28,7 @@ export default class SimpleMessageRouterConstruct extends Construct {
 
     const outputQueueProps: sqs.QueueProps = {
       receiveMessageWaitTime: cdk.Duration.seconds(20),
-      visibilityTimeout: cdk.Duration.seconds(3),
+      visibilityTimeout: cdk.Duration.seconds(3),      
     };
 
     this.positiveOutputDLQ = new sqs.Queue(this, 'PositiveOutputDLQ');
@@ -58,6 +58,7 @@ export default class SimpleMessageRouterConstruct extends Construct {
         runtime: lambda.Runtime.NODEJS_18_X,
         entry: path.join(__dirname, '.', 'simpleMessageRouter.ts'),
         handler: 'handler',
+        tracing: lambda.Tracing.ACTIVE,
         environment: {
           INPUT_QUEUE_URL: props.inputQueue.queueUrl,
           POSITIVE_OUTPUT_QUEUE_URL: this.positiveOutputQueue.queueUrl,

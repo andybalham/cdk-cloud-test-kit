@@ -34,6 +34,7 @@ export default class SimpleEventRouterConstruct extends Construct {
         runtime: lambda.Runtime.NODEJS_18_X,
         entry: path.join(__dirname, '.', 'simpleEventRouter.ts'),
         handler: 'handler',
+        tracing: lambda.Tracing.ACTIVE,
         environment: {
           INPUT_TOPIC_ARN: props.inputTopic.topicArn,
           POSITIVE_OUTPUT_TOPIC_ARN: this.positiveOutputTopic.topicArn,
