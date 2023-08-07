@@ -4,9 +4,10 @@
 /* eslint-disable import/prefer-default-export */
 import { SNSEvent } from 'aws-lambda/trigger/sns';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+import * as AWSXRay from 'aws-xray-sdk';
 import { Event } from './Event';
 
-const sns = new SNSClient({});
+const sns = AWSXRay.captureAWSv3Client(new SNSClient({}));
 
 export const handler = async (event: SNSEvent): Promise<void> => {
   //

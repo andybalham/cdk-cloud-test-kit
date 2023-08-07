@@ -4,10 +4,10 @@
 /* eslint-disable import/prefer-default-export */
 import { SQSEvent } from 'aws-lambda/trigger/sqs';
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
+import * as AWSXRay from 'aws-xray-sdk';
 import { Message } from './Message';
 
-// const sqs = new SQS({});
-const sqs = new SQSClient({});
+const sqs = AWSXRay.captureAWSv3Client(new SQSClient({}));
 
 export const handler = async (event: SQSEvent): Promise<void> => {
   //
